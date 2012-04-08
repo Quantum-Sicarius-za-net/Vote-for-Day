@@ -1,3 +1,20 @@
+/**
+This file is part of VoteforDay.
+
+VoteforDay is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+VoteforDay is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with VoteforDay.  If not, see http://www.gnu.org/licenses/.
+**/
+
 package za.net.quantumsicarius.voteforday;
 
 import org.bukkit.ChatColor;
@@ -22,7 +39,7 @@ public class VoteGUI extends GenericPopup{
 		Container box = new GenericContainer();
 		
 		int widthScale = player.getMainScreen().getWidth() / 10;
-	    int heightScale = player.getMainScreen().getHeight() / 5;
+		int heightScale = player.getMainScreen().getHeight() / 5;
 	    
 	    //Label
 	    String votestring = ChatColor.GREEN + "Cast your vote!";
@@ -46,12 +63,10 @@ public class VoteGUI extends GenericPopup{
 	    box.setLayout(ContainerType.VERTICAL);
 	    box.setAnchor(WidgetAnchor.CENTER_CENTER);
 	    box.setWidth(widthScale).setHeight(heightScale);
-        //box.shiftYPos(40);
-        //box.shiftXPos(-acceptButton.getWidth());
 	    
 	    // Attach container to widget
-        this.setTransparent(true);
-	    this.attachWidget(vfd, box);
+	    this.setTransparent(true);
+        this.attachWidget(vfd, box);
         this.setDirty(true);
 	}
 	
