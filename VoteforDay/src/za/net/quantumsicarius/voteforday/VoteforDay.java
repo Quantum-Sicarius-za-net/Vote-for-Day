@@ -91,13 +91,11 @@ public class VoteforDay extends JavaPlugin implements Listener{
 					sender.sendMessage(chat.chatWarning("There is already an active vote!"));
 				}
 				else {
+					log.logDebug("Player: " + sender.getName() + " has started a vote!", showLogDebug);
 					sender.sendMessage(chat.chatInfo("Started Vote!"));		
 					
 					runVote();					
 				}
-			}
-			else {
-				sender.sendMessage(chat.chatWarning("Can't run vote when its day!"));
 			}
 			return true;
 			
@@ -112,11 +110,13 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						if (voted.containsKey(player)) {
 							// Check if player has voted
 							if (voted.get(player) == false) {
+								log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
 								sender.sendMessage(chat.chatInfo("You voted: Yes"));
 								voted.put(player, true);
 								votes.put(player, true);	
 							}
 							else {
+								log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
 								sender.sendMessage(chat.chatWarning("You have already voted!"));
 							}
 						}
@@ -124,14 +124,14 @@ public class VoteforDay extends JavaPlugin implements Listener{
 							voted.put(player, false);
 							
 							if (voted.get(player) == false) {
+								log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
 								sender.sendMessage(chat.chatInfo("You voted: Yes"));
-								//sender.sendMessage("[VoteforDay] You voted: Yes");
 								voted.put(player, true);
 								votes.put(player, true);	
 							}
 							else {
+								log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
 								sender.sendMessage(chat.chatWarning("You have already voted!"));
-								//sender.sendMessage("[VoteforDay] You have already voted!");
 							}
 						}
 					}
@@ -140,11 +140,13 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						if (voted.containsKey(player)) {
 							// Check if player has voted
 							if (voted.get(player) == false) {
+								log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
 								sender.sendMessage(chat.chatInfo("You voted: NO"));
 								voted.put(player, true);
 								votes.put(player, false);
 							}
 							else {
+								log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
 								sender.sendMessage(chat.chatWarning("You have already voted!"));
 							}
 						}
@@ -152,11 +154,13 @@ public class VoteforDay extends JavaPlugin implements Listener{
 							voted.put(player, false);
 							
 							if (voted.get(player) == false) {
+								log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
 								sender.sendMessage(chat.chatInfo("You voted: No"));
 								voted.put(player, true);
 								votes.put(player, false);	
 							}
 							else {
+								log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
 								sender.sendMessage(chat.chatWarning("You have already voted!"));
 							}
 						}
@@ -188,10 +192,23 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	private boolean testRunVote(Player player) {
 		
 		current_world = player.getWorld();
-		if  (current_world.getTime() > config.getVoteAllowStartTime(this)) {
-			return true;
+		
+		// Check if the world environment is allowed
+		if(current_world.getEnvironment() == World.Environment.NORMAL) {
+			if  (current_world.getTime() > config.getVoteAllowStartTime(this)) {
+				return true;
+			}
+			else {
+				log.logDebug("Player: " + player.getName() + " has tried to vote during day time!", showLogDebug);
+				player.sendMessage(chat.chatWarning("Can't vote when its day!"));
+				return false;
+			}
 		}
-		return false;
+		else {
+			log.logDebug("Player: " + player.getName() + " has tried to start a vote in an illegal world environment! World Environment: " + current_world.getEnvironment(), showLogDebug);
+			player.sendMessage(chat.chatSevere("You can only use this command in a Normal World!"));
+			return false;
+		}
 	}
 	
 	// Initialize a vote session
@@ -209,7 +226,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				
 				spoutplayer.sendNotification("Vote!","Start Voting!" , Material.BONE);
 				
-				log.logDebug("Spout player is: " + spoutplayer.getTitle(), showLogDebug);
+				log.logDebug("Spout player is: " + spoutplayer.getName(), showLogDebug);
 				
 				if (spoutplayer.isSpoutCraftEnabled()) {
 					log.logDebug(spoutplayer.getTitle() + " Spout is enabled!" , showLogDebug);
@@ -238,7 +255,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		
 		VoteGUI gui = new VoteGUI(player);
 		
-		log.logDebug("Button click! by: " + player.getTitle(), config.getShowDebugLog(this));
+		log.logDebug("Button click! by: " + player.getName(), config.getShowDebugLog(this));
 		
 		// If button is YES
 		if (gui.isAccept(control)) {
@@ -246,10 +263,12 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				if (voted.get(player) == false) {
 					votes.put(player, true);
 					voted.put(player, true);
+					log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
 					player.sendNotification("Vote", "You voted YES", Material.BONE);
 					player.getMainScreen().getActivePopup().close();
 				}
 				else {
+					log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
 					player.sendNotification("Vote", "You have already voted!", Material.BONE);
 					player.getMainScreen().getActivePopup().close();
 				}
@@ -267,10 +286,12 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				if (voted.get(player) == false) {
 					votes.put(player, false);
 					voted.put(player, true);
+					log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
 					player.sendNotification("Vote", "You voted NO", Material.BONE);
 					player.getMainScreen().getActivePopup().close();
 				}
 				else {
+					log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
 					player.sendNotification("Vote", "You have already voted!", Material.BONE);
 					player.getMainScreen().getActivePopup().close();
 				}
@@ -282,7 +303,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 			}
 		}
 		else {
-			player.sendMessage(chat.chatSevere("Failed to detect button! Please contact developer!"));
+			log.logSevere("Failed to detect button! Please contact developer!");;
 		}
 	}
 	
@@ -338,6 +359,6 @@ public class VoteforDay extends JavaPlugin implements Listener{
 					}
 				}
 				
-			}} , 400L);
+			}} , config.getVoteSessionTime(this)); //400L
 	}
 }

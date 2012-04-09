@@ -67,4 +67,9 @@ public class Config {
 		
 	}
 	
+	// Get vote session time (Multiply by 20 ticks, since there is 20 ticks in a second!)
+	public int getVoteSessionTime(Plugin plugin) {
+		return plugin.getConfig().getInt("voteSessionTime") * 20;
+	}
+	
 }
