@@ -31,7 +31,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class VoteGUI extends GenericPopup{
     
-    protected VoteforDay vfd = (VoteforDay) getPlugin().getServer().getPluginManager().getPlugin("VoteforDay");
+	protected VoteforDay vfd = (VoteforDay) getPlugin().getServer().getPluginManager().getPlugin("VoteforDay");
     
 	public VoteGUI (SpoutPlayer player) {
 		
@@ -41,33 +41,33 @@ public class VoteGUI extends GenericPopup{
 		int widthScale = player.getMainScreen().getWidth() / 10;
 		int heightScale = player.getMainScreen().getHeight() / 5;
 	    
-	    //Label
-	    String votestring = ChatColor.GREEN + "Cast your vote!";
-	    GenericLabel label = new GenericLabel(votestring);
-	    label.setAnchor(WidgetAnchor.CENTER_CENTER);
+		//Label
+		String votestring = ChatColor.GREEN + "Cast your vote!";
+		GenericLabel label = new GenericLabel(votestring);
+		label.setAnchor(WidgetAnchor.CENTER_CENTER);
 	    
-	    // Yes Button
-	    GenericButton acceptButton = new GenericButton("Yes");
-	    acceptButton.setAnchor(WidgetAnchor.CENTER_CENTER);
-	    acceptButton.setAlign(WidgetAnchor.CENTER_CENTER);
-	    acceptButton.setHoverColor(new Color(0, 255, 0));
+		// Yes Button
+		GenericButton acceptButton = new GenericButton("Yes");
+		acceptButton.setAnchor(WidgetAnchor.CENTER_CENTER);
+		acceptButton.setAlign(WidgetAnchor.CENTER_CENTER);
+		acceptButton.setHoverColor(new Color(0, 255, 0));
 	     
-	    // No Button
-	    GenericButton declineButton = new GenericButton("No");
-	    declineButton.setAnchor(WidgetAnchor.CENTER_CENTER);
-	    declineButton.setAlign(WidgetAnchor.CENTER_CENTER);
-	    declineButton.setHoverColor(new Color(255, 0, 0));
+		// No Button
+		GenericButton declineButton = new GenericButton("No");
+		declineButton.setAnchor(WidgetAnchor.CENTER_CENTER);
+		declineButton.setAlign(WidgetAnchor.CENTER_CENTER);
+		declineButton.setHoverColor(new Color(255, 0, 0));
 	     
-	    // Attach Buttons to container
-	    box.addChildren(label ,acceptButton, declineButton);
-	    box.setLayout(ContainerType.VERTICAL);
-	    box.setAnchor(WidgetAnchor.CENTER_CENTER);
-	    box.setWidth(widthScale).setHeight(heightScale);
+		// Attach Buttons to container
+		box.addChildren(label ,acceptButton, declineButton);
+		box.setLayout(ContainerType.VERTICAL);
+		box.setAnchor(WidgetAnchor.CENTER_CENTER);
+		box.setWidth(widthScale).setHeight(heightScale);
 	    
-	    // Attach container to widget
-	    this.setTransparent(true);
-        this.attachWidget(vfd, box);
-        this.setDirty(true);
+		// Attach container to widget
+		this.setTransparent(true);
+		this.attachWidget(vfd, box);
+		this.setDirty(true);
 	}
 	
 	// Check button isAccept

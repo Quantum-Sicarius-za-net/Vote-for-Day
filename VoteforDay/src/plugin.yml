@@ -1,6 +1,6 @@
 name: VoteforDay
 main: za.net.quantumsicarius.voteforday.VoteforDay
-version: 0.1
+version: 0.2
 depend: [Spout]
 commands:
    voteforday:
