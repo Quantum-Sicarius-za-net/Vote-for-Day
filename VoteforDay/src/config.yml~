@@ -1,0 +1,8 @@
+# Do not modify this!
+configFileVersion: 0.2
+# Time at wich votes may commence (Night Time Defualt = 13800)
+voteAllowStartTime: 13800
+# Force voting to start automatically when night voteAllowStartTime comes(Defualt = false)
+forceVoteAtNight: false
+# Enable/Disable debug log (Default = false)
+showDebugLog: false

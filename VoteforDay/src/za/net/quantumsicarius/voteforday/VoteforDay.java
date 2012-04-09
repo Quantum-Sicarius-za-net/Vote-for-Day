@@ -28,12 +28,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.getspout.commons.ChatColor;
 import org.getspout.spoutapi.gui.Button;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 
-import za.net.quantumsicarius.voteforday.VoteGUI;
+
+import za.net.quantumsicarius.voteforday.Chat.Chat;
+import za.net.quantumsicarius.voteforday.Config.Config;
+import za.net.quantumsicarius.voteforday.GUI.VoteGUI;
+import za.net.quantumsicarius.voteforday.Logger.LogMain;
 
 public class VoteforDay extends JavaPlugin implements Listener{
 	
@@ -46,13 +49,31 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	// Current session
 	private boolean vote_session = false;
 	
+	// Create Logger object
+	LogMain log = new LogMain("VoteforDay");
+	
+	// Create Chat Object
+	Chat chat = new Chat("VoteforDay");
+	
+	// Create config object
+	Config config;
+	
+	// Set up show debug log boolean
+	boolean showLogDebug = false;
+	
 	public void onEnable() {
-		System.out.println(this + " Enabled!");
+		// Create config object
+		config = new Config(this);
+		
+		// Set up show debug log boolean
+		showLogDebug = config.getShowDebugLog(this);
+		
 		getServer().getPluginManager().registerEvents(this, this);
+		log.logInfo("Enabled!");
 	}
 	
 	public void onDisable() {
-		System.out.println(this + " Disabled!");
+		log.logInfo("Disabled!");
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
@@ -67,16 +88,16 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		if (cmd.getName().equalsIgnoreCase("voteforday") && player != null){
 			if (testRunVote(player)) {
 				if (vote_session) {
-					sender.sendMessage("[VoteforDay] There is already an active vote!");
+					sender.sendMessage(chat.chatWarning("There is already an active vote!"));
 				}
 				else {
-					sender.sendMessage("[VoteforDay] Started Vote!!!");			
+					sender.sendMessage(chat.chatInfo("Started Vote!"));		
 					
 					runVote();					
 				}
 			}
 			else {
-				sender.sendMessage("[VoteforDay] Can't run vote when its day!");
+				sender.sendMessage(chat.chatWarning("Can't run vote when its day!"));
 			}
 			return true;
 			
@@ -91,24 +112,26 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						if (voted.containsKey(player)) {
 							// Check if player has voted
 							if (voted.get(player) == false) {
-								sender.sendMessage("[VoteforDay] You voted: Yes");
+								sender.sendMessage(chat.chatInfo("You voted: Yes"));
 								voted.put(player, true);
 								votes.put(player, true);	
 							}
 							else {
-								sender.sendMessage("[VoteforDay] You have already voted!");
+								sender.sendMessage(chat.chatWarning("You have already voted!"));
 							}
 						}
 						else {
 							voted.put(player, false);
 							
 							if (voted.get(player) == false) {
-								sender.sendMessage("[VoteforDay] You voted: Yes");
+								sender.sendMessage(chat.chatInfo("You voted: Yes"));
+								//sender.sendMessage("[VoteforDay] You voted: Yes");
 								voted.put(player, true);
 								votes.put(player, true);	
 							}
 							else {
-								sender.sendMessage("[VoteforDay] You have already voted!");
+								sender.sendMessage(chat.chatWarning("You have already voted!"));
+								//sender.sendMessage("[VoteforDay] You have already voted!");
 							}
 						}
 					}
@@ -117,44 +140,45 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						if (voted.containsKey(player)) {
 							// Check if player has voted
 							if (voted.get(player) == false) {
-								sender.sendMessage("[VoteforDay] You voted: No");
+								sender.sendMessage(chat.chatInfo("You voted: NO"));
 								voted.put(player, true);
 								votes.put(player, false);
 							}
 							else {
-								sender.sendMessage("[VoteforDay] You have already voted!");
+								sender.sendMessage(chat.chatWarning("You have already voted!"));
 							}
 						}
 						else {
 							voted.put(player, false);
 							
 							if (voted.get(player) == false) {
-								sender.sendMessage("[VoteforDay] You voted: No");
+								sender.sendMessage(chat.chatInfo("You voted: No"));
 								voted.put(player, true);
 								votes.put(player, false);	
 							}
 							else {
-								sender.sendMessage("[VoteforDay] You have already voted!");
+								sender.sendMessage(chat.chatWarning("You have already voted!"));
 							}
 						}
 					}
 					else {
-						sender.sendMessage("[VoteforDay] You made an illegal vote! Retry!");
+						sender.sendMessage(chat.chatSevere("You made an illegal vote! Retry!"));
+						return false;
 					}
 				}
 				else {
-					sender.sendMessage("[VoteforDay] There isn't an active vote session!");
+					sender.sendMessage(chat.chatWarning("There isn't an active vote session!"));
 				}
 				return true;
 			}
 		}
 		else {
 			if (player == null) {
-				sender.sendMessage(ChatColor.RED + "This command can only be run by a player");
+				sender.sendMessage(chat.chatSevere("This command can only be run by a player!"));
 				return true;
 			}
 			else {
-				sender.sendMessage(ChatColor.RED + "Illegal arguement! Usage: ");
+				sender.sendMessage(chat.chatSevere("You made an illegal arguement!"));
 			}
 		}
 		return false;
@@ -164,7 +188,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	private boolean testRunVote(Player player) {
 		
 		current_world = player.getWorld();
-		if  (current_world.getTime() > 13800) {
+		if  (current_world.getTime() > config.getVoteAllowStartTime(this)) {
 			return true;
 		}
 		return false;
@@ -185,10 +209,10 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				
 				spoutplayer.sendNotification("Vote!","Start Voting!" , Material.BONE);
 				
-				System.out.println("Spout player is: " + spoutplayer.getTitle());
+				log.logDebug("Spout player is: " + spoutplayer.getTitle(), showLogDebug);
 				
 				if (spoutplayer.isSpoutCraftEnabled()) {
-					System.out.println(spoutplayer.getTitle() + " Spout is enabled!");
+					log.logDebug(spoutplayer.getTitle() + " Spout is enabled!" , showLogDebug);
 					
 					VoteGUI popup = new VoteGUI(spoutplayer);
 					spoutplayer.getMainScreen().attachPopupScreen(popup);
@@ -196,7 +220,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				
 			}
 			else {
-				players[i].sendMessage(ChatColor.GREEN + "[VoteforDay]" + ChatColor.GOLD + " Start Voting!");
+				players[i].sendMessage(chat.chatInfo("Start voting!"));
 			}
 			
 		}
@@ -214,7 +238,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		
 		VoteGUI gui = new VoteGUI(player);
 		
-		System.out.println("Button click!!!! by: " + player.getTitle());
+		log.logDebug("Button click! by: " + player.getTitle(), config.getShowDebugLog(this));
 		
 		// If button is YES
 		if (gui.isAccept(control)) {
@@ -258,7 +282,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 			}
 		}
 		else {
-			player.sendMessage("Failed button");
+			player.sendMessage(chat.chatSevere("Failed to detect button! Please contact developer!"));
 		}
 	}
 	
@@ -270,7 +294,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 			public void run() {
 				
 				Server server = getServer();
-				server.broadcastMessage("[VoteforDay] Voting Complete!");
+				server.broadcastMessage(chat.chatInfo("Voting Complete!"));
 				
 				int positive_votes = 0;
 				int negative_votes = 0;
@@ -286,17 +310,17 @@ public class VoteforDay extends JavaPlugin implements Listener{
 					}
 				}
 				
-				System.out.println("Vote results are: " + positive_votes + " voted yes and: " + negative_votes + " voted no!");
+				log.logDebug("Vote results are: " + positive_votes + " voted yes and: " + negative_votes + " voted no!" , showLogDebug);
 				
 				// Test which votes won
 				if (positive_votes > negative_votes) {
-					System.out.println("Positive votes won! Changing to day!");
-					server.broadcastMessage("[VoteforDay] 'Yes' votes won! Changing to day!");
+					log.logDebug("Positive votes won! Changing to day!", showLogDebug);
+					server.broadcastMessage(chat.chatInfo("'Yes' votes won! Changing to day!"));
 					current_world.setTime(0);
 				}
 				else {
-					System.out.println("Negative votes won! Not changing to day!");
-					server.broadcastMessage("[VoteforDay] 'No' votes won! Not changing to day!");
+					log.logDebug("Negative votes won! Not changing to day!" , showLogDebug);
+					server.broadcastMessage(chat.chatInfo("'No' votes won! Not changing to day!"));
 				}
 				
 				// Reset vote session

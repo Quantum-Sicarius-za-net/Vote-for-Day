@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with VoteforDay.  If not, see http://www.gnu.org/licenses/.
 **/
 
-package za.net.quantumsicarius.voteforday;
+package za.net.quantumsicarius.voteforday.GUI;
 
 import org.bukkit.ChatColor;
 import org.getspout.spoutapi.gui.Button;
@@ -28,6 +28,9 @@ import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
+import za.net.quantumsicarius.voteforday.VoteforDay;
+
 
 public class VoteGUI extends GenericPopup{
     
