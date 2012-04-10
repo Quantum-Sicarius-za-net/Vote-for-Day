@@ -75,7 +75,7 @@ public class VoteGUI extends GenericPopup{
 	
 	// Check button isAccept
     public boolean isAccept(Button button) {
-    	if (button.getText().equalsIgnoreCase("yes")) {
+    	if (button.getText() == "Yes") {
     		return true;
     	}
     	else {
@@ -85,7 +85,7 @@ public class VoteGUI extends GenericPopup{
     
     // Check button isDecline
     public boolean isDecline(Button button) {
-        if (button.getText().equalsIgnoreCase("no")) {
+        if (button.getText() == "No") {
         	return true;
         }
         else {

@@ -32,7 +32,6 @@ import org.getspout.spoutapi.gui.Button;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 
-
 import za.net.quantumsicarius.voteforday.Chat.Chat;
 import za.net.quantumsicarius.voteforday.Config.Config;
 import za.net.quantumsicarius.voteforday.GUI.VoteGUI;
@@ -44,6 +43,10 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	private final HashMap<Player, Boolean> votes = new HashMap<Player, Boolean>();
 	// Votes: voted boolean
 	private final HashMap<Player, Boolean> voted = new HashMap<Player, Boolean>();
+	// Votes per world
+	private final HashMap<Player, World> player_world = new HashMap<Player, World>();
+	// Vote session world
+	private final HashMap<World, Boolean> vote_session_world = new HashMap<World, Boolean>();
 	// World
 	private World current_world;
 	// Current session
@@ -92,7 +95,10 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				}
 				else {
 					log.logDebug("Player: " + sender.getName() + " has started a vote!", showLogDebug);
-					sender.sendMessage(chat.chatInfo("Started Vote!"));		
+					sender.sendMessage(chat.chatInfo("Started Vote!"));	
+					
+					vote_session_world.put(player.getWorld(), true);
+					log.logDebug("Started a vote session in: " + player.getWorld().getName(), showLogDebug);
 					
 					runVote();					
 				}
@@ -103,89 +109,120 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		// Check vote parameters
 		else if (cmd.getName().equalsIgnoreCase("vote") && args.length > 0 && player != null) {
 			if (args[0] != null && args.length < 2) {
-				if (vote_session) {
+				
+				if(vote_session_world.containsKey(player.getWorld())) {
+					if (vote_session_world.get(player.getWorld())) {
+						
+						// If parameter equal 'y'
+						if (args[0].equalsIgnoreCase("y")) {
+							
+							// Check if player exists							
+							if (voted.containsKey(player)) {
+								// Check if player has voted
+								if (voted.get(player) == false) {
+									log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
+									sender.sendMessage(chat.chatInfo("You voted: Yes"));
+									
+									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+									player_world.put(player, player.getWorld());
+									voted.put(player, true);
+									votes.put(player, true);	
+								}
+								else {
+									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+									sender.sendMessage(chat.chatWarning("You have already voted!"));
+								}
+							}
+							else {
+								voted.put(player, false);
+								
+								if (voted.get(player) == false) {
+									log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
+									sender.sendMessage(chat.chatInfo("You voted: Yes"));
+									
+									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+									player_world.put(player, player.getWorld());
+									voted.put(player, true);
+									votes.put(player, true);	
+								}
+								else {
+									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+									sender.sendMessage(chat.chatWarning("You have already voted!"));
+								}
+							}
+						}
+						
+						// If parameter equal 'n'
+						else if (args[0].equalsIgnoreCase("n")) {
+							// Check if player exists
+							if (voted.containsKey(player)) {
+								// Check if player has voted
+								if (voted.get(player) == false) {
+									log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
+									sender.sendMessage(chat.chatInfo("You voted: NO"));
+									
+									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+									player_world.put(player, player.getWorld());
+									voted.put(player, true);
+									votes.put(player, false);
+								}
+								else {
+									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+									sender.sendMessage(chat.chatWarning("You have already voted!"));
+								}
+							}
+							else {
+								voted.put(player, false);
+								
+								if (voted.get(player) == false) {
+									log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
+									sender.sendMessage(chat.chatInfo("You voted: No"));
+									
+									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+									player_world.put(player, player.getWorld());
+									voted.put(player, true);
+									votes.put(player, false);	
+								}
+								else {
+									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+									sender.sendMessage(chat.chatWarning("You have already voted!"));
+								}
+							}
+						}
 					
-					if (args[0].equalsIgnoreCase("y")) {
-						// Check if player exists
-						if (voted.containsKey(player)) {
-							// Check if player has voted
-							if (voted.get(player) == false) {
-								log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
-								sender.sendMessage(chat.chatInfo("You voted: Yes"));
-								voted.put(player, true);
-								votes.put(player, true);	
-							}
-							else {
-								log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-								sender.sendMessage(chat.chatWarning("You have already voted!"));
-							}
-						}
+						// If none of the vote parameters passed then Warn player and return false
 						else {
-							voted.put(player, false);
-							
-							if (voted.get(player) == false) {
-								log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
-								sender.sendMessage(chat.chatInfo("You voted: Yes"));
-								voted.put(player, true);
-								votes.put(player, true);	
-							}
-							else {
-								log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-								sender.sendMessage(chat.chatWarning("You have already voted!"));
-							}
-						}
-					}
-					else if (args[0].equalsIgnoreCase("n")) {
-						// Check if player exists
-						if (voted.containsKey(player)) {
-							// Check if player has voted
-							if (voted.get(player) == false) {
-								log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
-								sender.sendMessage(chat.chatInfo("You voted: NO"));
-								voted.put(player, true);
-								votes.put(player, false);
-							}
-							else {
-								log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-								sender.sendMessage(chat.chatWarning("You have already voted!"));
-							}
-						}
-						else {
-							voted.put(player, false);
-							
-							if (voted.get(player) == false) {
-								log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
-								sender.sendMessage(chat.chatInfo("You voted: No"));
-								voted.put(player, true);
-								votes.put(player, false);	
-							}
-							else {
-								log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-								sender.sendMessage(chat.chatWarning("You have already voted!"));
-							}
+							sender.sendMessage(chat.chatSevere("You made an illegal vote! Retry!"));
+							return false;
 						}
 					}
 					else {
-						sender.sendMessage(chat.chatSevere("You made an illegal vote! Retry!"));
-						return false;
+						player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
 					}
+					
+					
 				}
+				
 				else {
-					sender.sendMessage(chat.chatWarning("There isn't an active vote session!"));
+					player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
 				}
+				//----End of parameter check----//
 				return true;
 			}
 		}
 		else {
+			
 			if (player == null) {
 				sender.sendMessage(chat.chatSevere("This command can only be run by a player!"));
 				return true;
 			}
 			else {
 				sender.sendMessage(chat.chatSevere("You made an illegal arguement!"));
+				return false;
 			}
+			
 		}
-		return false;
+		return true;
 	}
 	
 	// Test to see if its night
@@ -219,31 +256,36 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		Player players [] = current_world.getPlayers().toArray(new Player[0]);
 		
 		for (int i = 0;i < players.length; i++) {
-			
-			if (players[i] instanceof SpoutPlayer) {
+			if (vote_session_world.containsKey(players[i].getWorld())) {
 				
-				SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
-				
-				spoutplayer.sendNotification("Vote!","Start Voting!" , Material.BONE);
-				
-				log.logDebug("Spout player is: " + spoutplayer.getName(), showLogDebug);
-				
-				if (spoutplayer.isSpoutCraftEnabled()) {
-					log.logDebug(spoutplayer.getTitle() + " Spout is enabled!" , showLogDebug);
+				// Check if players are on a voting world!
+				if (vote_session_world.get(players[i].getWorld())) {
 					
-					VoteGUI popup = new VoteGUI(spoutplayer);
-					spoutplayer.getMainScreen().attachPopupScreen(popup);
+					if (players[i] instanceof SpoutPlayer) {
+						
+						SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
+						
+						spoutplayer.sendNotification("Vote!","Start Voting!" , Material.BONE);
+						
+						log.logDebug("Spout player is: " + spoutplayer.getName(), showLogDebug);
+						
+						if (spoutplayer.isSpoutCraftEnabled()) {
+							log.logDebug(spoutplayer.getTitle() + " Spout is enabled!" , showLogDebug);
+							
+							VoteGUI popup = new VoteGUI(spoutplayer);
+							spoutplayer.getMainScreen().attachPopupScreen(popup);
+						}
+						
+					}
+					else {
+						players[i].sendMessage(chat.chatInfo("Start voting!"));
+					}
 				}
-				
-			}
-			else {
-				players[i].sendMessage(chat.chatInfo("Start voting!"));
-			}
-			
+			}	
 		}
 		
 		// Call end method to check results!
-		voteEnd(players);
+		voteEnd(players, current_world);
 	}
 	
 	// Button Click Listener
@@ -257,76 +299,110 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		
 		log.logDebug("Button click! by: " + player.getName(), config.getShowDebugLog(this));
 		
-		// If button is YES
-		if (gui.isAccept(control)) {
-			if (votes.containsKey(player) && voted.containsKey(player)) {
-				if (voted.get(player) == false) {
-					votes.put(player, true);
-					voted.put(player, true);
-					log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
-					player.sendNotification("Vote", "You voted YES", Material.BONE);
-					player.getMainScreen().getActivePopup().close();
+		// Key checks (Multi-world check)
+		if (vote_session_world.containsKey(player.getWorld())) {
+			if (vote_session_world.get(player.getWorld())) {
+				
+				// If button is YES
+				if (gui.isAccept(control)) {
+					if (votes.containsKey(player) && voted.containsKey(player)) {
+						if (voted.get(player) == false) {
+							log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+							player_world.put(player, player.getWorld());
+							
+							votes.put(player, true);
+							voted.put(player, true);
+							log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
+							player.sendNotification("Vote", "You voted YES", Material.BONE);
+							player.getMainScreen().getActivePopup().close();
+						}
+						else {
+							log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+							player.sendNotification("Vote", "You have already voted!", Material.BONE);
+							player.getMainScreen().getActivePopup().close();
+						}
+					}
+					else {
+						log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+						player_world.put(player, player.getWorld());
+						
+						voted.put(player, true);
+						votes.put(player, true);
+						player.getMainScreen().getActivePopup().close();
+					}
+				}
+				
+				// If button is NO
+				else if (gui.isDecline(control)) {
+					if (votes.containsKey(player) && voted.containsKey(player)) {
+						if (voted.get(player) == false) {
+							log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+							player_world.put(player, player.getWorld());
+							
+							votes.put(player, false);
+							voted.put(player, true);
+							log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
+							player.sendNotification("Vote", "You voted NO", Material.BONE);
+							player.getMainScreen().getActivePopup().close();
+						}
+						else {
+							log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+							player.sendNotification("Vote", "You have already voted!", Material.BONE);
+							player.getMainScreen().getActivePopup().close();
+						}
+					}
+					else {
+						log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+						player_world.put(player, player.getWorld());
+						voted.put(player, true);
+						votes.put(player, false);
+						player.getMainScreen().getActivePopup().close();
+					}
 				}
 				else {
-					log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-					player.sendNotification("Vote", "You have already voted!", Material.BONE);
-					player.getMainScreen().getActivePopup().close();
+					log.logSevere("Failed to detect button! Please contact developer!");;
 				}
 			}
 			else {
-				voted.put(player, true);
-				votes.put(player, true);
-				player.getMainScreen().getActivePopup().close();
-			}
-		}
-		
-		// If button is NO
-		else if (gui.isDecline(control)) {
-			if (votes.containsKey(player) && voted.containsKey(player)) {
-				if (voted.get(player) == false) {
-					votes.put(player, false);
-					voted.put(player, true);
-					log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
-					player.sendNotification("Vote", "You voted NO", Material.BONE);
-					player.getMainScreen().getActivePopup().close();
-				}
-				else {
-					log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-					player.sendNotification("Vote", "You have already voted!", Material.BONE);
-					player.getMainScreen().getActivePopup().close();
-				}
-			}
-			else {
-				voted.put(player, true);
-				votes.put(player, false);
-				player.getMainScreen().getActivePopup().close();
+				player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
 			}
 		}
 		else {
-			log.logSevere("Failed to detect button! Please contact developer!");;
+			player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
 		}
+		
+		
 	}
 	
 	
-	private void voteEnd(final Player[] players) {
+	private void voteEnd(final Player[] players, final World world) {
 		this.getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable () {
 
 			@Override
 			public void run() {
 				
 				Server server = getServer();
-				server.broadcastMessage(chat.chatInfo("Voting Complete!"));
+				server.broadcastMessage(chat.chatInfo("Voting Complete! On world: " + world.getName()));
 				
 				int positive_votes = 0;
 				int negative_votes = 0;
 				
 				for (int i = 0; i < players.length; i++) {
+					// Test keys
 					if (votes.containsKey(players[i])) {
-						if (votes.get(players[i]) == true) {
-							positive_votes ++;
-						}
-						else {
-							negative_votes++;
+						if (player_world.containsKey(players[i]) && vote_session_world.containsKey(world)) {
+							// First check if world has a voting session (Just to be safe...)
+							if (vote_session_world.get(world)) {
+								// Check if player is on same world of the one that has finished voting
+								if (player_world.get(players[i]) == world) {
+									if (votes.get(players[i]) == true) {
+										positive_votes ++;
+									}
+									else {
+										negative_votes++;
+									}
+								}
+							}
 						}
 					}
 				}
@@ -335,29 +411,45 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				
 				// Test which votes won
 				if (positive_votes > negative_votes) {
-					log.logDebug("Positive votes won! Changing to day!", showLogDebug);
-					server.broadcastMessage(chat.chatInfo("'Yes' votes won! Changing to day!"));
+					log.logDebug("Positive votes won! On world: " + world.getName() +" Changing to day!", showLogDebug);
+					server.broadcastMessage(chat.chatInfo("'Yes' votes won! On world: " + world.getName() + " Changing to day!"));
 					current_world.setTime(0);
 				}
 				else {
-					log.logDebug("Negative votes won! Not changing to day!" , showLogDebug);
-					server.broadcastMessage(chat.chatInfo("'No' votes won! Not changing to day!"));
+					log.logDebug("Negative votes won! On world: " + world.getName() + " Not changing to day!" , showLogDebug);
+					server.broadcastMessage(chat.chatInfo("'No' votes won! On world: " + world.getName() + " Not changing to day!"));
+				}
+				
+				// Reset players votes
+				for (int i = 0; i < players.length; i++) {
+					// First check if keys are in place
+					if (voted.containsKey(players[i]) && votes.containsKey(players[i])) {
+						// Check for more keys
+						if (player_world.containsKey(players[i]) && vote_session_world.containsKey(world)) {
+							// If players world is equal to the current world that ended a vote
+							if (player_world.get(players[i]) == world) {
+								if (vote_session_world.get(world)) {
+									// Reset player
+									log.logDebug("Resseting player: " + players[i].getName() + " vote!", showLogDebug);
+									voted.put(players[i], false);
+									votes.put(players[i], false);
+									
+									// If a player is a spout player and that player has an open popup from the vote, close it
+									if (players[i] instanceof SpoutPlayer) {
+										SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
+										spoutplayer.getMainScreen().closePopup();
+									}
+								}
+							}
+						}
+					}
 				}
 				
 				// Reset vote session
 				vote_session = false;
 				
-				// Reset players votes
-				for (int i = 0; i < players.length; i++) {
-					if (voted.containsKey(players[i]) && votes.containsKey(players[i])) {
-						voted.put(players[i], false);
-						votes.put(players[i], false);
-					}
-					if (players[i] instanceof SpoutPlayer) {
-						SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
-						spoutplayer.getMainScreen().closePopup();
-					}
-				}
+				// Reset current world
+				vote_session_world.put(world, false);
 				
 			}} , config.getVoteSessionTime(this)); //400L
 	}
