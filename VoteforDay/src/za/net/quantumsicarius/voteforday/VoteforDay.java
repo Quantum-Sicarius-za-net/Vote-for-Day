@@ -50,7 +50,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	// World
 	private World current_world;
 	// Current session
-	private boolean vote_session = false;
+	//private boolean vote_session = false;
 	
 	// Create Logger object
 	LogMain log = new LogMain("VoteforDay");
@@ -90,8 +90,21 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		// Check command voteforday (Start the vote)
 		if (cmd.getName().equalsIgnoreCase("voteforday") && player != null){
 			if (testRunVote(player)) {
-				if (vote_session) {
-					sender.sendMessage(chat.chatWarning("There is already an active vote!"));
+				// Check keys
+				if (vote_session_world.containsKey(player.getWorld())) {
+					// If current world is active ignore player's vote start
+					if (vote_session_world.get(player.getWorld())) {
+						sender.sendMessage(chat.chatWarning("There is already an active vote!"));
+					}
+					else {
+						log.logDebug("Player: " + sender.getName() + " has started a vote!", showLogDebug);
+						sender.sendMessage(chat.chatInfo("Started Vote!"));	
+						
+						vote_session_world.put(player.getWorld(), true);
+						log.logDebug("Started a vote session in: " + player.getWorld().getName(), showLogDebug);
+						
+						runVote(player.getWorld());					
+					}
 				}
 				else {
 					log.logDebug("Player: " + sender.getName() + " has started a vote!", showLogDebug);
@@ -100,7 +113,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 					vote_session_world.put(player.getWorld(), true);
 					log.logDebug("Started a vote session in: " + player.getWorld().getName(), showLogDebug);
 					
-					runVote();					
+					runVote(player.getWorld());					
 				}
 			}
 			return true;
@@ -249,9 +262,12 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	}
 	
 	// Initialize a vote session
-	private void runVote() {
+	private void runVote(World current_world) {
 		
-		vote_session = true;
+		//vote_session = true;
+		
+		// Set the worlds vote session to true
+		vote_session_world.put(current_world, true);
 		
 		Player players [] = current_world.getPlayers().toArray(new Player[0]);
 		
@@ -446,7 +462,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				}
 				
 				// Reset vote session
-				vote_session = false;
+				//vote_session = false;
 				
 				// Reset current world
 				vote_session_world.put(world, false);
