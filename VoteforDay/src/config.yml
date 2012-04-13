@@ -1,10 +1,9 @@
 # Config file for VoteforDay
-configFileVersion: 0.4.2 # Do not modify this!
+configFileVersion: 0.5 # Do not modify this!
 # Time at wich votes may commence (Night Time Defualt = 13800)
 voteAllowStartTime: 13800
 # Vote session time in seconds (Defualt = 20)
 voteSessionTime: 20
 # Force voting to start automatically when night voteAllowStartTime comes(Defualt = false)
-forceVoteAtNight: false
 # Enable/Disable debug log (Default = false)
 showDebugLog: false

@@ -1,15 +1,13 @@
 name: VoteforDay
 main: za.net.quantumsicarius.voteforday.VoteforDay
-version: 0.4.2
+version: 0.5
 depend: [Spout]
+authors: [Quantum-Sicarius,Guy_de_Siguro]
 commands:
    voteforday:
       description: Start a new vote.
       usage: /<command>
-      permission: voteforday.voteforday
-      permission-message: You don't have voteforday.voteforday
    vote:
       description: Place your vote.
       usage: /<command> <y/n>
-      permission: voteforday.vote
-      permission-message: You don't have voteforday.vote
+

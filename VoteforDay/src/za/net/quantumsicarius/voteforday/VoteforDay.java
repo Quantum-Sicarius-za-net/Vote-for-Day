@@ -89,16 +89,29 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		
 		// Check command voteforday (Start the vote)
 		if (cmd.getName().equalsIgnoreCase("voteforday") && player != null){
-			if (testRunVote(player)) {
-				// Check keys
-				if (vote_session_world.containsKey(player.getWorld())) {
-					// If current world is active ignore player's vote start
-					if (vote_session_world.get(player.getWorld())) {
-						sender.sendMessage(chat.chatWarning("There is already an active vote!"));
+			
+			// Check permission
+			if (player.hasPermission("voteforday.voteforday")  | player.isOp()) {
+				if (testRunVote(player)) {
+					// Check keys
+					if (vote_session_world.containsKey(player.getWorld())) {
+						// If current world is active ignore player's vote start
+						if (vote_session_world.get(player.getWorld())) {
+							sender.sendMessage(chat.chatWarning("There is already an active vote!"));
+						}
+						else {
+							log.logDebug("Player: " + sender.getName() + " has started a vote!", showLogDebug);
+							sender.sendMessage(chat.chatInfo("Started Vote!"));	
+							
+							vote_session_world.put(player.getWorld(), true);
+							log.logDebug("Started a vote session in: " + player.getWorld().getName(), showLogDebug);
+							
+							runVote(player.getWorld());					
+						}
 					}
 					else {
 						log.logDebug("Player: " + sender.getName() + " has started a vote!", showLogDebug);
-						sender.sendMessage(chat.chatInfo("Started Vote!"));	
+						sender.sendMessage(chat.chatInfo("You Started the Vote!"));	
 						
 						vote_session_world.put(player.getWorld(), true);
 						log.logDebug("Started a vote session in: " + player.getWorld().getName(), showLogDebug);
@@ -106,16 +119,12 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						runVote(player.getWorld());					
 					}
 				}
-				else {
-					log.logDebug("Player: " + sender.getName() + " has started a vote!", showLogDebug);
-					sender.sendMessage(chat.chatInfo("You Started the Vote!"));	
-					
-					vote_session_world.put(player.getWorld(), true);
-					log.logDebug("Started a vote session in: " + player.getWorld().getName(), showLogDebug);
-					
-					runVote(player.getWorld());					
-				}
+			
 			}
+			else {
+				player.sendMessage(chat.chatSevere("You are not permitted to start a vote!"));
+			}
+			
 			return true;
 			
 		}
@@ -123,105 +132,109 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		else if (cmd.getName().equalsIgnoreCase("vote") && args.length > 0 && player != null) {
 			if (args[0] != null && args.length < 2) {
 				
-				if(vote_session_world.containsKey(player.getWorld())) {
-					if (vote_session_world.get(player.getWorld())) {
-						
-						// If parameter equal 'y'
-						if (args[0].equalsIgnoreCase("y")) {
+				// Check for permission
+				if (player.hasPermission("voteforday.vote")  | player.isOp()) {
+					if(vote_session_world.containsKey(player.getWorld())) {
+						if (vote_session_world.get(player.getWorld())) {
 							
-							// Check if player exists							
-							if (voted.containsKey(player)) {
-								// Check if player has voted
-								if (voted.get(player) == false) {
-									log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
-									sender.sendMessage(chat.chatInfo("You voted: Yes"));
-									
-									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
-									player_world.put(player, player.getWorld());
-									voted.put(player, true);
-									votes.put(player, true);	
-								}
-								else {
-									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-									sender.sendMessage(chat.chatWarning("You have already voted!"));
-								}
-							}
-							else {
-								voted.put(player, false);
+							// If parameter equal 'y'
+							if (args[0].equalsIgnoreCase("y")) {
 								
-								if (voted.get(player) == false) {
-									log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
-									sender.sendMessage(chat.chatInfo("You voted: Yes"));
-									
-									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
-									player_world.put(player, player.getWorld());
-									voted.put(player, true);
-									votes.put(player, true);	
+								// Check if player exists							
+								if (voted.containsKey(player)) {
+									// Check if player has voted
+									if (voted.get(player) == false) {
+										log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
+										sender.sendMessage(chat.chatInfo("You voted: Yes"));
+										
+										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+										player_world.put(player, player.getWorld());
+										voted.put(player, true);
+										votes.put(player, true);	
+									}
+									else {
+										log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+										sender.sendMessage(chat.chatWarning("You have already voted!"));
+									}
 								}
 								else {
-									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-									sender.sendMessage(chat.chatWarning("You have already voted!"));
+									voted.put(player, false);
+									
+									if (voted.get(player) == false) {
+										log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
+										sender.sendMessage(chat.chatInfo("You voted: Yes"));
+										
+										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+										player_world.put(player, player.getWorld());
+										voted.put(player, true);
+										votes.put(player, true);	
+									}
+									else {
+										log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+										sender.sendMessage(chat.chatWarning("You have already voted!"));
+									}
 								}
 							}
-						}
+							
+							// If parameter equal 'n'
+							else if (args[0].equalsIgnoreCase("n")) {
+								// Check if player exists
+								if (voted.containsKey(player)) {
+									// Check if player has voted
+									if (voted.get(player) == false) {
+										log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
+										sender.sendMessage(chat.chatInfo("You voted: NO"));
+										
+										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+										player_world.put(player, player.getWorld());
+										voted.put(player, true);
+										votes.put(player, false);
+									}
+									else {
+										log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+										sender.sendMessage(chat.chatWarning("You have already voted!"));
+									}
+								}
+								else {
+									voted.put(player, false);
+									
+									if (voted.get(player) == false) {
+										log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
+										sender.sendMessage(chat.chatInfo("You voted: No"));
+										
+										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+										player_world.put(player, player.getWorld());
+										voted.put(player, true);
+										votes.put(player, false);	
+									}
+									else {
+										log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+										sender.sendMessage(chat.chatWarning("You have already voted!"));
+									}
+								}
+							}
 						
-						// If parameter equal 'n'
-						else if (args[0].equalsIgnoreCase("n")) {
-							// Check if player exists
-							if (voted.containsKey(player)) {
-								// Check if player has voted
-								if (voted.get(player) == false) {
-									log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
-									sender.sendMessage(chat.chatInfo("You voted: NO"));
-									
-									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
-									player_world.put(player, player.getWorld());
-									voted.put(player, true);
-									votes.put(player, false);
-								}
-								else {
-									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-									sender.sendMessage(chat.chatWarning("You have already voted!"));
-								}
-							}
+							// If none of the vote parameters passed then Warn player and return false
 							else {
-								voted.put(player, false);
-								
-								if (voted.get(player) == false) {
-									log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
-									sender.sendMessage(chat.chatInfo("You voted: No"));
-									
-									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
-									player_world.put(player, player.getWorld());
-									voted.put(player, true);
-									votes.put(player, false);	
-								}
-								else {
-									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-									sender.sendMessage(chat.chatWarning("You have already voted!"));
-								}
+								sender.sendMessage(chat.chatSevere("You made an illegal vote! Retry!"));
+								return false;
 							}
 						}
-					
-						// If none of the vote parameters passed then Warn player and return false
 						else {
-							sender.sendMessage(chat.chatSevere("You made an illegal vote! Retry!"));
-							return false;
+							player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
 						}
 					}
 					else {
 						player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
 					}
-					
-					
+					//----End of parameter check----//
+					return true;
 				}
-				
 				else {
-					player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+					player.sendMessage(chat.chatSevere("You are not permitted to vote!"));
 				}
-				//----End of parameter check----//
-				return true;
 			}
+
 		}
 		else {
 			
@@ -288,8 +301,11 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						if (spoutplayer.isSpoutCraftEnabled()) {
 							log.logDebug(spoutplayer.getTitle() + " Spout is enabled!" , showLogDebug);
 							
-							VoteGUI popup = new VoteGUI(spoutplayer);
-							spoutplayer.getMainScreen().attachPopupScreen(popup);
+							// Check if player has permission
+							if (spoutplayer.hasPermission("voteforday.vote") | spoutplayer.isOp()) {
+								VoteGUI popup = new VoteGUI(spoutplayer);
+								spoutplayer.getMainScreen().attachPopupScreen(popup);
+							}
 						}
 						
 					}
@@ -317,85 +333,104 @@ public class VoteforDay extends JavaPlugin implements Listener{
 					
 				// If button is YES
 				if (gui.isAccept(control)) {
-					// Key checks (Multi-world check)
-					if (vote_session_world.containsKey(player.getWorld())) {
-						if (vote_session_world.get(player.getWorld())) {
-							
-							// Check more keys
-							if (votes.containsKey(player) && voted.containsKey(player)) {
-								if (voted.get(player) == false) {
+					
+					// Check permission
+					if (player.hasPermission("voteforday.vote") | player.isOp()) {
+
+						// Key checks (Multi-world check)
+						if (vote_session_world.containsKey(player.getWorld())) {
+							if (vote_session_world.get(player.getWorld())) {
+								
+								// Check more keys
+								if (votes.containsKey(player) && voted.containsKey(player)) {
+									if (voted.get(player) == false) {
+										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+										player_world.put(player, player.getWorld());
+										
+										votes.put(player, true);
+										voted.put(player, true);
+										log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
+										player.sendNotification("Vote", "You voted YES", Material.BONE);
+										player.getMainScreen().getActivePopup().close();
+									}
+									else {
+										log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+										player.sendNotification("Vote", "You have already voted!", Material.BONE);
+										player.getMainScreen().getActivePopup().close();
+									}
+								}
+								else {
 									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
 									player_world.put(player, player.getWorld());
 									
-									votes.put(player, true);
 									voted.put(player, true);
-									log.logDebug("Player: " + player.getName() + " voted YES", showLogDebug);
-									player.sendNotification("Vote", "You voted YES", Material.BONE);
-									player.getMainScreen().getActivePopup().close();
-								}
-								else {
-									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-									player.sendNotification("Vote", "You have already voted!", Material.BONE);
+									votes.put(player, true);
 									player.getMainScreen().getActivePopup().close();
 								}
 							}
 							else {
-								log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
-								player_world.put(player, player.getWorld());
-								
-								voted.put(player, true);
-								votes.put(player, true);
-								player.getMainScreen().getActivePopup().close();
+								player.sendMessage(chat.chatWarning("There isn't an active vote session!"));
 							}
 						}
 						else {
 							player.sendMessage(chat.chatWarning("There isn't an active vote session!"));
 						}
 					}
+					// If player doesn't have permission
 					else {
-						player.sendMessage(chat.chatWarning("There isn't an active vote session!"));
+						player.sendMessage(chat.chatSevere("You are not permitted to vote!"));
 					}
 				}
 				
 				// If button is NO
 				else if (gui.isDecline(control)) {
-					// Key checks (Multi-world check)
-					if (vote_session_world.containsKey(player.getWorld())) {
-						if (vote_session_world.get(player.getWorld())) {
-							
-							// More key checks
-							if (votes.containsKey(player) && voted.containsKey(player)) {
-								if (voted.get(player) == false) {
-									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
-									player_world.put(player, player.getWorld());
-									
-									votes.put(player, false);
-									voted.put(player, true);
-									log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
-									player.sendNotification("Vote", "You voted NO", Material.BONE);
-									player.getMainScreen().getActivePopup().close();
+					
+					// Check for permission
+					if (player.hasPermission("voteforday.vote") | player.isOp()) {
+
+						// Key checks (Multi-world check)
+						if (vote_session_world.containsKey(player.getWorld())) {
+							if (vote_session_world.get(player.getWorld())) {
+								
+								// More key checks
+								if (votes.containsKey(player) && voted.containsKey(player)) {
+									if (voted.get(player) == false) {
+										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+										player_world.put(player, player.getWorld());
+										
+										votes.put(player, false);
+										voted.put(player, true);
+										log.logDebug("Player: " + player.getName() + " voted NO", showLogDebug);
+										player.sendNotification("Vote", "You voted NO", Material.BONE);
+										player.getMainScreen().getActivePopup().close();
+									}
+									else {
+										log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
+										player.sendNotification("Vote", "You have already voted!", Material.BONE);
+										player.getMainScreen().getActivePopup().close();
+									}
 								}
 								else {
-									log.logDebug("Player: " + player.getName() + " Has already voted!", showLogDebug);
-									player.sendNotification("Vote", "You have already voted!", Material.BONE);
+									log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
+									player_world.put(player, player.getWorld());
+									voted.put(player, true);
+									votes.put(player, false);
 									player.getMainScreen().getActivePopup().close();
 								}
 							}
 							else {
-								log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap", showLogDebug);
-								player_world.put(player, player.getWorld());
-								voted.put(player, true);
-								votes.put(player, false);
-								player.getMainScreen().getActivePopup().close();
-							}
+								player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+							}	
 						}
 						else {
 							player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
 						}	
 					}
 					else {
-						player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
-					}	
+						log.logDebug("Player: " + player.getName() + "Is not permitted to vote!", showLogDebug);
+						player.sendMessage(chat.chatSevere("You are not permitted to vote!"));
+					}
+					
 				}	
 	}
 	
