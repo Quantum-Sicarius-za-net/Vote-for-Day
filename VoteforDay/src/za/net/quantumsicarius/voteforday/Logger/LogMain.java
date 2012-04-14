@@ -19,15 +19,37 @@ package za.net.quantumsicarius.voteforday.Logger;
 
 import java.util.logging.Logger;
 
+import org.bukkit.plugin.Plugin;
+
+import za.net.quantumsicarius.voteforday.Config.Config;
+
 public class LogMain{
+	
+	// Define vfd (Plugin)
+	Plugin vfd;
 	
 	// Create logger object
 	private static final Logger log = Logger.getLogger("minecraft");
+	
+	// Define plugin prefix
 	String pluginPrefix;
 	
-	public LogMain (String plugin) {
+	// Define config object
+	Config config;
+	
+	// Boolean to show debug
+	private boolean active;
+	
+	public LogMain (Plugin plugin) {
 		// Create prefix
-		pluginPrefix = "[" + plugin + "] ";					
+		vfd = plugin;
+		pluginPrefix = "[" + plugin.getName() + "] ";
+		
+	}
+	
+	// This method gets the config class so that it doesn't re-instantiate!
+	public void initConfigClass(Config config_class) {
+		config = config_class;
 	}
 	
 	// Info log method
@@ -36,7 +58,12 @@ public class LogMain{
 	}
 	
 	// Debug log method
-	public void logDebug(String string, boolean active) {
+	public void logDebug(String string) {
+		
+		if (config != null) {
+			active = config.getShowDebugLog();
+		}
+		
 		// Check if config allowed this log
 		if (active) {
 			log.info(pluginPrefix + "[DEBUG] " + string);
