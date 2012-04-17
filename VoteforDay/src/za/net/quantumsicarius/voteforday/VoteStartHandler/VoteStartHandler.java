@@ -12,6 +12,7 @@ import za.net.quantumsicarius.voteforday.Logger.LogMain;
 
 public class VoteStartHandler {
 	
+	// Define vfd (Plugin)
 	Plugin vfd;
 	
 	// Define chat object
