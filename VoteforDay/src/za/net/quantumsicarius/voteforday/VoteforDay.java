@@ -275,8 +275,6 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						
 						SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
 						
-						spoutplayer.sendNotification("Vote!","Start Voting!" , Material.BONE);
-						
 						log.logDebug("Spout player is: " + spoutplayer.getName());
 						
 						if (spoutplayer.isSpoutCraftEnabled()) {
@@ -284,14 +282,18 @@ public class VoteforDay extends JavaPlugin implements Listener{
 							
 							// Check if player has permission
 							if (spoutplayer.hasPermission("voteforday.vote") | spoutplayer.isOp()) {
+								spoutplayer.sendNotification("Vote!","Start Voting!" , Material.BONE);
 								VoteGUI popup = new VoteGUI(spoutplayer);
 								spoutplayer.getMainScreen().attachPopupScreen(popup);
 							}
 						}
 						
 					}
-					else {
-						players[i].sendMessage(chat.chatInfo("Start voting!"));
+					else if (players[i] instanceof Player){
+						// Check if player has permission
+						if (players[i].hasPermission("voteforday.vote")) {
+							players[i].sendMessage(chat.chatInfo("Start voting!"));
+						}
 					}
 				}
 			}	
@@ -383,11 +385,13 @@ public class VoteforDay extends JavaPlugin implements Listener{
 								}
 							}
 							else {
-								player.sendMessage(chat.chatWarning("There isn't an active vote session!"));
+								player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+								player.getMainScreen().getActivePopup().close();
 							}
 						}
 						else {
-							player.sendMessage(chat.chatWarning("There isn't an active vote session!"));
+							player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+							player.getMainScreen().getActivePopup().close();
 						}
 					}
 					// If player doesn't have permission
@@ -434,10 +438,12 @@ public class VoteforDay extends JavaPlugin implements Listener{
 							}
 							else {
 								player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+								player.getMainScreen().getActivePopup().close();
 							}	
 						}
 						else {
 							player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+							player.getMainScreen().getActivePopup().close();
 						}	
 					}
 					else {
