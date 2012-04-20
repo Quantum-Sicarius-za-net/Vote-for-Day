@@ -40,6 +40,7 @@ import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 import za.net.quantumsicarius.voteforday.Chat.Chat;
 import za.net.quantumsicarius.voteforday.Config.Config;
 import za.net.quantumsicarius.voteforday.GUI.VoteGUI;
+import za.net.quantumsicarius.voteforday.GUI.VoteProgress;
 import za.net.quantumsicarius.voteforday.Keyboard.KeyboardTranslate;
 import za.net.quantumsicarius.voteforday.Logger.LogMain;
 import za.net.quantumsicarius.voteforday.VoteStartHandler.VoteStartHandler;
@@ -54,8 +55,15 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	private final HashMap<Player, World> player_world = new HashMap<Player, World>();
 	// Vote session world
 	private HashMap<World, Boolean> vote_session_world = new HashMap<World, Boolean>();
+	
+	private HashMap<Player, VoteProgress> player_voteProgress_object = new HashMap<Player, VoteProgress>();
+	
 	// World
 	private World current_world;
+	
+	// Define Vote Progress object
+	VoteProgress voteProgressGUI;
+	
 	// Define Logger object
 	LogMain log;
 	
@@ -94,6 +102,9 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		
 		// Set up show debug log boolean
 		showLogDebug = config.getShowDebugLog();
+		
+		// Create vote progress GUI
+		//voteProgressGUI = new VoteProgress();
 		
 		// Register event listeners
 		getServer().getPluginManager().registerEvents(this, this);
@@ -154,7 +165,11 @@ public class VoteforDay extends JavaPlugin implements Listener{
 										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap");
 										player_world.put(player, player.getWorld());
 										voted.put(player, true);
-										votes.put(player, true);	
+										votes.put(player, true);
+										
+										log.logDebug("Calling updateGUI method!");
+										updateGUI(player, true);
+										
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
@@ -171,7 +186,10 @@ public class VoteforDay extends JavaPlugin implements Listener{
 										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap");
 										player_world.put(player, player.getWorld());
 										voted.put(player, true);
-										votes.put(player, true);	
+										votes.put(player, true);
+										
+										log.logDebug("Calling updateGUI method!");
+										updateGUI(player, true);
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
@@ -193,6 +211,8 @@ public class VoteforDay extends JavaPlugin implements Listener{
 										player_world.put(player, player.getWorld());
 										voted.put(player, true);
 										votes.put(player, false);
+										
+										updateGUI(player, false);
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
@@ -209,7 +229,9 @@ public class VoteforDay extends JavaPlugin implements Listener{
 										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap");
 										player_world.put(player, player.getWorld());
 										voted.put(player, true);
-										votes.put(player, false);	
+										votes.put(player, false);
+										
+										updateGUI(player, false);
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
@@ -285,6 +307,10 @@ public class VoteforDay extends JavaPlugin implements Listener{
 								spoutplayer.sendNotification("Vote!","Start Voting!" , Material.BONE);
 								VoteGUI popup = new VoteGUI(spoutplayer);
 								spoutplayer.getMainScreen().attachPopupScreen(popup);
+								voteProgressGUI = new VoteProgress(spoutplayer, this);
+								player_voteProgress_object.put(spoutplayer, voteProgressGUI);
+								//voteProgressGUI.createGUI(spoutplayer, this);
+								voteProgressGUI.reset_GUI(spoutplayer);
 							}
 						}
 						else {
@@ -301,6 +327,30 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		
 		// Call end method to check results!
 		voteEnd(players, current_world);
+	}
+	
+	// Update Method
+	public void updateGUI(Player player, boolean type_of_vote) {
+		
+		Player[] active_player_array = player.getWorld().getPlayers().toArray(new Player[0]);
+		
+		for (int i = 0; i < active_player_array.length; i++) {
+			SpoutPlayer spoutplayer = (SpoutPlayer) active_player_array[i];
+			if (spoutplayer.isSpoutCraftEnabled()) {
+				log.logDebug("Updating GUI for: " + spoutplayer.getName());
+				if (type_of_vote) {
+					if (player_voteProgress_object.containsKey(spoutplayer)) {
+						player_voteProgress_object.get(spoutplayer).update(1, 0, spoutplayer);
+					}
+				}
+				else {
+					if (player_voteProgress_object.containsKey(spoutplayer)) {
+						player_voteProgress_object.get(spoutplayer).update(0, 1, spoutplayer);
+					}
+				}
+			}
+		}
+		
 	}
 	
 	// Keyboard Listener
@@ -368,6 +418,8 @@ public class VoteforDay extends JavaPlugin implements Listener{
 										log.logDebug("Player: " + player.getName() + " voted YES");
 										player.sendNotification("Vote", "You voted YES", Material.BONE);
 										player.getMainScreen().getActivePopup().close();
+										
+										updateGUI(player, true);
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
@@ -382,6 +434,10 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									voted.put(player, true);
 									votes.put(player, true);
 									player.getMainScreen().getActivePopup().close();
+									
+									player.sendNotification("Vote", "You voted YES", Material.BONE);
+									
+									updateGUI(player, true);
 								}
 							}
 							else {
@@ -421,6 +477,8 @@ public class VoteforDay extends JavaPlugin implements Listener{
 										log.logDebug("Player: " + player.getName() + " voted NO");
 										player.sendNotification("Vote", "You voted NO", Material.BONE);
 										player.getMainScreen().getActivePopup().close();
+										
+										updateGUI(player, false);
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
@@ -433,7 +491,11 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									player_world.put(player, player.getWorld());
 									voted.put(player, true);
 									votes.put(player, false);
+									
 									player.getMainScreen().getActivePopup().close();
+									
+									player.sendNotification("Vote", "You voted NO", Material.BONE);
+									updateGUI(player, false);
 								}
 							}
 							else {
@@ -520,6 +582,9 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									if (players[i] instanceof SpoutPlayer) {
 										SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
 										spoutplayer.getMainScreen().closePopup();
+										if (player_voteProgress_object.containsKey(spoutplayer)) {
+											player_voteProgress_object.get(spoutplayer).close_GUI(spoutplayer);
+										}
 									}
 								}
 							}
