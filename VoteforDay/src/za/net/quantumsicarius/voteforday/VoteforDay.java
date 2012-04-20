@@ -271,14 +271,14 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				// Check if players are on a voting world!
 				if (vote_session_world.get(players[i].getWorld())) {
 					
+					// If player is a SpoutPlayer (Don't know if its a bug, but this seems to always return true)
 					if (players[i] instanceof SpoutPlayer) {
 						
+						// Create the spoutplayer local object and parse it player
 						SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
 						
-						log.logDebug("Spout player is: " + spoutplayer.getName());
-						
 						if (spoutplayer.isSpoutCraftEnabled()) {
-							log.logDebug(spoutplayer.getTitle() + " Spout is enabled!");
+							log.logDebug("Spout player is: " + spoutplayer.getName());
 							
 							// Check if player has permission
 							if (spoutplayer.hasPermission("voteforday.vote") | spoutplayer.isOp()) {
@@ -287,13 +287,13 @@ public class VoteforDay extends JavaPlugin implements Listener{
 								spoutplayer.getMainScreen().attachPopupScreen(popup);
 							}
 						}
-						
-					}
-					else if (players[i] instanceof Player){
-						// Check if player has permission
-						if (players[i].hasPermission("voteforday.vote")) {
-							players[i].sendMessage(chat.chatInfo("Start voting!"));
+						else {
+							// Check if player has permission
+							if (players[i].hasPermission("voteforday.vote")) {
+								players[i].sendMessage(chat.chatInfo("Start voting!"));
+							}
 						}
+						
 					}
 				}
 			}	
