@@ -2,7 +2,7 @@ About
 -----
 Vote for Day is a serverside plugin for Bukkit that utilises SpoutPlugin to allow players to vote when night time comes to change it back to day with a GUI
 
-TextureMe is [open source][GitHub]
+Vote for Day is [open source][GitHub]
 [Report an issue][Issues]
 
 Installation
@@ -37,4 +37,4 @@ Get support at Vote-for-Day's [Spout-Forums thread][Page]
 
 License
 -------
-TextureMe is licensed under [GNU GPL v3][License]
+Vote for Day is licensed under [GNU GPL v3][License]
