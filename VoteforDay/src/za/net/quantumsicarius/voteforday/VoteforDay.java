@@ -27,6 +27,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.gui.Button;
@@ -55,8 +57,10 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	private final HashMap<Player, World> player_world = new HashMap<Player, World>();
 	// Vote session world
 	private HashMap<World, Boolean> vote_session_world = new HashMap<World, Boolean>();
-	
+	// Player Progress Object
 	private HashMap<Player, VoteProgress> player_voteProgress_object = new HashMap<Player, VoteProgress>();
+	// Player Vote starter boolean
+	private HashMap<Player, Boolean> player_started_a_vote = new HashMap<Player, Boolean>();
 	
 	// World
 	private World current_world;
@@ -103,9 +107,6 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		// Set up show debug log boolean
 		showLogDebug = config.getShowDebugLog();
 		
-		// Create vote progress GUI
-		//voteProgressGUI = new VoteProgress();
-		
 		// Register event listeners
 		getServer().getPluginManager().registerEvents(this, this);
 		
@@ -132,12 +133,35 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		// Check command voteforday (Start the vote)
 		if (cmd.getName().equalsIgnoreCase("voteforday") && player != null){
 
-			if(votestarthandler.onCommand(player, vote_session_world, votes,voted)) {
-				runVote(player.getWorld());
-				
-				vote_session_world = votestarthandler.vote_session_world();
-				votes = votestarthandler.votes();
-				voted = votestarthandler.voted();
+			// Make sure that the player doesn't start another vote on a separate world
+			if (player_started_a_vote.containsKey(player)) {
+				if (!player_started_a_vote.get(player)) {
+					if(votestarthandler.onCommand(player, vote_session_world, votes,voted)) {
+						runVote(player.getWorld());
+						
+						vote_session_world = votestarthandler.vote_session_world();
+						votes = votestarthandler.votes();
+						voted = votestarthandler.voted();
+						
+						player_world.put(player, player.getWorld());
+						player_started_a_vote.put(player, true);
+					}
+				}
+				else {
+					player.sendMessage(chat.chatWarning("You have already started a vote session!"));
+				}
+			}
+			else {
+				if(votestarthandler.onCommand(player, vote_session_world, votes,voted)) {
+					runVote(player.getWorld());
+					
+					vote_session_world = votestarthandler.vote_session_world();
+					votes = votestarthandler.votes();
+					voted = votestarthandler.voted();
+					
+					player_world.put(player, player.getWorld());
+					player_started_a_vote.put(player, true);
+				}
 			}
 			
 			return true;
@@ -299,6 +323,9 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						// Create the spoutplayer local object and parse it player
 						SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
 						
+						log.logDebug("Adding player: " + players[i].getName() + " to world Map: " + players[i].getWorld());
+						player_world.put(players[i], players[i].getWorld());
+						
 						if (spoutplayer.isSpoutCraftEnabled()) {
 							log.logDebug("Spout player is: " + spoutplayer.getName());
 							
@@ -329,6 +356,36 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		voteEnd(players, current_world);
 	}
 	
+	// Player Disconnect event
+	@EventHandler
+	public void onPlayerQuit (PlayerQuitEvent event) {
+		
+		log.logDebug("Player: " + event.getPlayer().getName() + " has disconnected! Cleaning his HashMap object");
+		
+		// This frees some memory (Or in theory it should..)
+		player_voteProgress_object.remove(event.getPlayer());
+	}
+	
+	// Player Teleport event, this event checks for player world change. When a player changes a world, it detaches the vote progress GUI to eliminate graphical artifacts
+	@EventHandler
+	public void onPlayerChangeWorld(PlayerTeleportEvent event) {
+		// Safety check
+		if (player_world.containsKey(event.getPlayer())) {
+			if (event.getPlayer().getWorld() != player_world.get(event.getPlayer())) {
+				log.logDebug("Player: " + event.getPlayer().getName() + " has changed worlds, closing his GUI");
+				player_voteProgress_object.get(event.getPlayer()).close_GUI((SpoutPlayer) event.getPlayer());
+			}
+		}
+		else {
+			player_world.put(event.getPlayer(), event.getPlayer().getWorld());	
+			if (event.getPlayer().getWorld() != player_world.get(event.getPlayer())) {
+				log.logDebug("Player: " + event.getPlayer().getName() + " has changed worlds, closing his GUI");
+				player_voteProgress_object.get(event.getPlayer()).close_GUI((SpoutPlayer) event.getPlayer());
+			}
+		}
+		
+	}
+	
 	// Update Method
 	public void updateGUI(Player player, boolean type_of_vote) {
 		
@@ -348,6 +405,10 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						player_voteProgress_object.get(spoutplayer).update(0, 1, spoutplayer);
 					}
 				}
+				if (spoutplayer.getWorld() != player_world.get(spoutplayer)) {
+					log.logDebug("Player: " + spoutplayer.getName() + " has changed worlds, closing his GUI");
+					player_voteProgress_object.get(spoutplayer).close_GUI(spoutplayer);
+				}
 			}
 		}
 		
@@ -366,22 +427,45 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				
 				// Check if player is in chat
 				if (arg0.getScreenType() == ScreenType.GAME_SCREEN) {
-					if (votestarthandler.onCommand(arg0.getPlayer(), vote_session_world, votes, voted)) {
-						runVote(arg0.getPlayer().getWorld());
+					
+					log.logDebug("Player: " + arg0.getPlayer().getName() + " has pressed the keybind!");
 						
-						vote_session_world = votestarthandler.vote_session_world();
-						votes = votestarthandler.votes();
-						voted = votestarthandler.voted();			
+					// Make sure that the player doesn't start another vote on a separate world
+					if (player_started_a_vote.containsKey(arg0.getPlayer())) {
+						if (!player_started_a_vote.get(arg0.getPlayer())) {
+							if (votestarthandler.onCommand(arg0.getPlayer(), vote_session_world, votes, voted)) {
+								runVote(arg0.getPlayer().getWorld());
+								
+								vote_session_world = votestarthandler.vote_session_world();
+								votes = votestarthandler.votes();
+								voted = votestarthandler.voted();
+								
+								player_world.put(arg0.getPlayer(), arg0.getPlayer().getWorld());
+								player_started_a_vote.put(arg0.getPlayer(), true);
+							}
+						}
+						else {
+							arg0.getPlayer().sendMessage(chat.chatWarning("You have already started a vote session!"));
+						}
 					}
 					else {
-						
+						if (votestarthandler.onCommand(arg0.getPlayer(), vote_session_world, votes, voted)) {
+							runVote(arg0.getPlayer().getWorld());
+							
+							vote_session_world = votestarthandler.vote_session_world();
+							votes = votestarthandler.votes();
+							voted = votestarthandler.voted();
+							
+							player_world.put(arg0.getPlayer(), arg0.getPlayer().getWorld());
+							player_started_a_vote.put(arg0.getPlayer(), true);
+						}
 					}
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyBindingEvent arg0) {
-				
+				// Unused
 			}
 		}, this);
 	}
@@ -534,11 +618,11 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				for (int i = 0; i < players.length; i++) {
 					// Test keys
 					if (votes.containsKey(players[i])) {
-						if (player_world.containsKey(players[i]) && vote_session_world.containsKey(world)) {
+						if (player_world.containsKey(players[i]) && vote_session_world.containsKey(current_world)) {
 							// First check if world has a voting session (Just to be safe...)
-							if (vote_session_world.get(world)) {
+							if (vote_session_world.get(current_world)) {
 								// Check if player is on same world of the one that has finished voting
-								if (player_world.get(players[i]) == world) {
+								if (player_world.get(players[i]) == current_world) {
 									if (votes.get(players[i]) == true) {
 										positive_votes ++;
 									}
@@ -555,13 +639,13 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				
 				// Test which votes won
 				if (positive_votes > negative_votes) {
-					log.logDebug("Positive votes won! On world: " + world.getName() +" Changing to day!");
+					log.logDebug("Positive votes won! On world: " + current_world.getName() +" Changing to day!");
 					server.broadcastMessage(chat.chatInfo("'Yes' votes won! On world: " + world.getName() + " Changing to day!"));
 					current_world.setTime(0);
 				}
 				else {
-					log.logDebug("Negative votes won! On world: " + world.getName() + " Not changing to day!");
-					server.broadcastMessage(chat.chatInfo("'No' votes won! On world: " + world.getName() + " Not changing to day!"));
+					log.logDebug("Negative votes won! On world: " + current_world.getName() + " Not changing to day!");
+					server.broadcastMessage(chat.chatInfo("'No' votes won! On world: " + current_world.getName() + " Not changing to day!"));
 				}
 				
 				// Reset players votes
@@ -569,22 +653,42 @@ public class VoteforDay extends JavaPlugin implements Listener{
 					// First check if keys are in place
 					if (voted.containsKey(players[i]) && votes.containsKey(players[i])) {
 						// Check for more keys
-						if (player_world.containsKey(players[i]) && vote_session_world.containsKey(world)) {
+						if (player_world.containsKey(players[i]) && vote_session_world.containsKey(current_world)) {
+							
 							// If players world is equal to the current world that ended a vote
-							if (player_world.get(players[i]) == world) {
-								if (vote_session_world.get(world)) {
+							if (player_world.get(players[i]) == current_world) {
+								
+								if (vote_session_world.get(current_world)) {
 									// Reset player
 									log.logDebug("Resseting player: " + players[i].getName() + " vote!");
 									voted.put(players[i], false);
 									votes.put(players[i], false);
-									
-									// If a player is a spout player and that player has an open popup from the vote, close it
-									if (players[i] instanceof SpoutPlayer) {
-										SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
-										spoutplayer.getMainScreen().closePopup();
-										if (player_voteProgress_object.containsKey(spoutplayer)) {
-											player_voteProgress_object.get(spoutplayer).close_GUI(spoutplayer);
-										}
+								}
+							}
+						}
+					}
+					
+					// Check for more keys
+					if (player_world.containsKey(players[i]) && vote_session_world.containsKey(current_world)) {
+						
+						// If players world is equal to the current world that ended a vote
+						if (player_world.get(players[i]) == current_world) {
+							
+							if (vote_session_world.get(current_world)) {	
+								
+								// Reset players vote start
+								player_started_a_vote.put(players[i], false);
+								
+								// If a player is a spout player and that player has an open popup from the vote, close it
+								if (players[i] instanceof SpoutPlayer) {
+									SpoutPlayer spoutplayer = (SpoutPlayer) players[i];
+									spoutplayer.getMainScreen().closePopup();
+									if (player_voteProgress_object.containsKey(spoutplayer)) {
+										log.logDebug("Closing Player: " + spoutplayer.getName() + " Vote Progress GUI");
+										player_voteProgress_object.get(spoutplayer).close_GUI(spoutplayer);
+									}
+									else {
+										log.logDebug("Player: " + spoutplayer.getName() + " is not in the HashMap (Progress GUI)");
 									}
 								}
 							}

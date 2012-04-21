@@ -1,3 +1,20 @@
+/**
+This file is part of VoteforDay.
+
+VoteforDay is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+VoteforDay is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with VoteforDay.  If not, see http://www.gnu.org/licenses/.
+**/
+
 package za.net.quantumsicarius.voteforday.GUI;
 
 import org.getspout.spoutapi.gui.GenericContainer;
@@ -26,10 +43,10 @@ public class VoteProgress{
 		title.setText("Vote Progress:");
 		title.setAnchor(WidgetAnchor.TOP_CENTER);
 		
-		progress_text_left.setText("0");
+		progress_text_left.setText("0 - Yes Votes");
 		progress_text_left.setAnchor(WidgetAnchor.CENTER_LEFT);
 		
-		progress_text_right.setText("0");
+		progress_text_right.setText("0 - No Votes");
 		progress_text_right.setAnchor(WidgetAnchor.CENTER_RIGHT);
 		
 		box.addChildren(title, progress_text_left, progress_text_right);
@@ -56,8 +73,8 @@ public class VoteProgress{
 	}
 	
 	public void reset_GUI(SpoutPlayer player) {
-		progress_text_left.setText("0");
-		progress_text_right.setText("0");
+		progress_text_left.setText("0 - Yes Votes");
+		progress_text_right.setText("0 - No Votes");
 		
 		box.setVisible(true);
 		
