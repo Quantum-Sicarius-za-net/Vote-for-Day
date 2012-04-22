@@ -7,7 +7,7 @@ Vote for Day is [open source][GitHub]
 
 Installation
 ------------
-* TextureMe requires [SpoutPlugin][Spout Link] and to run, you can [download the latest recommended build of spout here][Spout RB]
+* Vote for Day requires [SpoutPlugin][Spout Link] and to run, you can [download the latest recommended build of spout here][Spout RB]
 * The GUI also requires that the clients are using the [Spoutcraft][Spout Link] client mod  ([Download here][Get Spout])
 * Drag and drop SpoutPlugin into your plugins directory
 * Drag and drop Vote-for-Day into your plugin directory
