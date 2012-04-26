@@ -85,4 +85,9 @@ public class Config {
 		return vfd.getConfig().getString("keyBinding");
 	}
 	
+	// Get the language to use
+	public String getLanguage() {
+		return vfd.getConfig().getString("language");
+	}
+	
 }

@@ -1,0 +1,19 @@
+main: [Enabled!
+,Disabled!
+,You have already started a vote session
+,You started a vote session
+,A vote session has already been started on this world
+,You don't have permission to start a vote session!
+,Can't start a vote session when its day!
+,Can only start a vote session in the Normal World!
+,You voted YES
+,You voted NO
+,You have already voted!
+,You don't have permission to vote!
+,Illegal vote parameter!
+,There isn't an active vote session in your world!
+,Start voting!
+,Voting completed on 
+,YES votes won!
+,NO votes won!]
+

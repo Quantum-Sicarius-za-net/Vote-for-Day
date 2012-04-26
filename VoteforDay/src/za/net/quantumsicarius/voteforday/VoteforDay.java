@@ -44,6 +44,7 @@ import za.net.quantumsicarius.voteforday.Config.Config;
 import za.net.quantumsicarius.voteforday.GUI.VoteGUI;
 import za.net.quantumsicarius.voteforday.GUI.VoteProgress;
 import za.net.quantumsicarius.voteforday.Keyboard.KeyboardTranslate;
+import za.net.quantumsicarius.voteforday.Language.LanguageHandler;
 import za.net.quantumsicarius.voteforday.Logger.LogMain;
 import za.net.quantumsicarius.voteforday.VoteStartHandler.VoteStartHandler;
 
@@ -83,6 +84,9 @@ public class VoteforDay extends JavaPlugin implements Listener{
 	// Define keyboardTranlate
 	KeyboardTranslate keyboard_translate;
 	
+	// Define LanguageHandler
+	LanguageHandler languagehandler;
+	
 	// Set up show debug log boolean
 	boolean showLogDebug = false;
 	
@@ -98,8 +102,11 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		// Create chat object
 		chat = new Chat("VoteforDay");
 		
+		// Create LanguageHandler object
+		languagehandler = new LanguageHandler(config, log, this);
+		
 		// Create voteStartHandler object
-		votestarthandler = new VoteStartHandler(this, config, log, chat);
+		votestarthandler = new VoteStartHandler(this, config, log, chat, languagehandler);
 	
 		// Create keyboardTranslate object
 		keyboard_translate = new KeyboardTranslate();
@@ -115,11 +122,11 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		keyboard();
 		log.logDebug("Finished setting up keybinding!");
 		
-		log.logInfo("Enabled!");
+		log.logInfo(languagehandler.enable());
 	}
 	
 	public void onDisable() {
-		log.logInfo("Disabled!");
+		log.logInfo(languagehandler.disable());
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
@@ -148,7 +155,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 					}
 				}
 				else {
-					player.sendMessage(chat.chatWarning("You have already started a vote session!"));
+					player.sendMessage(chat.chatWarning(languagehandler.AlreadyActiveVoteSession()));
 				}
 			}
 			else {
@@ -184,7 +191,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									// Check if player has voted
 									if (voted.get(player) == false) {
 										log.logDebug("Player: " + player.getName() + " voted YES");
-										sender.sendMessage(chat.chatInfo("You voted: Yes"));
+										sender.sendMessage(chat.chatInfo(languagehandler.votedYes()));
 										
 										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap");
 										player_world.put(player, player.getWorld());
@@ -197,7 +204,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
-										sender.sendMessage(chat.chatWarning("You have already voted!"));
+										sender.sendMessage(chat.chatWarning(languagehandler.youHaveAlreadyVoted()));
 									}
 								}
 								else {
@@ -205,7 +212,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									
 									if (voted.get(player) == false) {
 										log.logDebug("Player: " + player.getName() + " voted YES");
-										sender.sendMessage(chat.chatInfo("You voted: Yes"));
+										sender.sendMessage(chat.chatInfo(languagehandler.votedYes()));
 										
 										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap");
 										player_world.put(player, player.getWorld());
@@ -217,7 +224,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
-										sender.sendMessage(chat.chatWarning("You have already voted!"));
+										sender.sendMessage(chat.chatWarning(languagehandler.youHaveAlreadyVoted()));
 									}
 								}
 							}
@@ -229,7 +236,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									// Check if player has voted
 									if (voted.get(player) == false) {
 										log.logDebug("Player: " + player.getName() + " voted NO");
-										sender.sendMessage(chat.chatInfo("You voted: NO"));
+										sender.sendMessage(chat.chatInfo(languagehandler.votedNo()));
 										
 										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap");
 										player_world.put(player, player.getWorld());
@@ -240,7 +247,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
-										sender.sendMessage(chat.chatWarning("You have already voted!"));
+										sender.sendMessage(chat.chatWarning(languagehandler.youHaveAlreadyVoted()));
 									}
 								}
 								else {
@@ -248,7 +255,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									
 									if (voted.get(player) == false) {
 										log.logDebug("Player: " + player.getName() + " voted NO");
-										sender.sendMessage(chat.chatInfo("You voted: No"));
+										sender.sendMessage(chat.chatInfo(languagehandler.votedNo()));
 										
 										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap");
 										player_world.put(player, player.getWorld());
@@ -259,29 +266,29 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
-										sender.sendMessage(chat.chatWarning("You have already voted!"));
+										sender.sendMessage(chat.chatWarning(languagehandler.youHaveAlreadyVoted()));
 									}
 								}
 							}
 						
 							// If none of the vote parameters passed then Warn player and return false
 							else {
-								sender.sendMessage(chat.chatSevere("You made an illegal vote! Retry!"));
+								sender.sendMessage(chat.chatSevere(languagehandler.IllegalVoteParam()));
 								return false;
 							}
 						}
 						else {
-							player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+							player.sendMessage(chat.chatWarning(languagehandler.NoActiveVoteSession()));
 						}
 					}
 					else {
-						player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+						player.sendMessage(chat.chatWarning(languagehandler.NoActiveVoteSession()));
 					}
 					//----End of parameter check----//
 					return true;
 				}
 				else {
-					player.sendMessage(chat.chatSevere("You are not permitted to vote!"));
+					player.sendMessage(chat.chatSevere(languagehandler.YouDoNotHavePermissionToVote()));
 				}
 			}
 
@@ -293,7 +300,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				return true;
 			}
 			else {
-				sender.sendMessage(chat.chatSevere("You made an illegal arguement!"));
+				sender.sendMessage(chat.chatSevere(languagehandler.IllegalVoteParam()));
 				return false;
 			}
 			
@@ -331,7 +338,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 							
 							// Check if player has permission
 							if (spoutplayer.hasPermission("voteforday.vote") | spoutplayer.isOp()) {
-								spoutplayer.sendNotification("Vote!","Start Voting!" , Material.BONE);
+								spoutplayer.sendNotification("Vote!",languagehandler.StartVoting() , Material.BONE);
 								VoteGUI popup = new VoteGUI(spoutplayer);
 								spoutplayer.getMainScreen().attachPopupScreen(popup);
 								voteProgressGUI = new VoteProgress(spoutplayer, this);
@@ -343,7 +350,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 						else {
 							// Check if player has permission
 							if (players[i].hasPermission("voteforday.vote")) {
-								players[i].sendMessage(chat.chatInfo("Start voting!"));
+								players[i].sendMessage(chat.chatInfo(languagehandler.StartVoting()));
 							}
 						}
 						
@@ -364,6 +371,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		
 		// This frees some memory (Or in theory it should..)
 		player_voteProgress_object.remove(event.getPlayer());
+		player_world.remove(event.getPlayer());
 	}
 	
 	// Player Teleport event, this event checks for player world change. When a player changes a world, it detaches the vote progress GUI to eliminate graphical artifacts
@@ -445,7 +453,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 							}
 						}
 						else {
-							arg0.getPlayer().sendMessage(chat.chatWarning("You have already started a vote session!"));
+							arg0.getPlayer().sendMessage(chat.chatWarning(languagehandler.voteAlreadyStarted()));
 						}
 					}
 					else {
@@ -482,8 +490,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		log.logDebug("Button click! by: " + player.getName());
 					
 				// If button is YES
-				if (gui.isAccept(control)) {
-					
+				if (gui.isAccept(control)) { 
 					// Check permission
 					if (player.hasPermission("voteforday.vote") | player.isOp()) {
 
@@ -496,18 +503,17 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									if (voted.get(player) == false) {
 										log.logDebug("Adding player's world: " + player.getWorld().getName() + " To HashMap");
 										player_world.put(player, player.getWorld());
-										
 										votes.put(player, true);
 										voted.put(player, true);
 										log.logDebug("Player: " + player.getName() + " voted YES");
-										player.sendNotification("Vote", "You voted YES", Material.BONE);
+										player.sendNotification("Vote", languagehandler.votedNo(), Material.BONE);
 										player.getMainScreen().getActivePopup().close();
 										
 										updateGUI(player, true);
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
-										player.sendNotification("Vote", "You have already voted!", Material.BONE);
+										player.sendNotification("Vote", languagehandler.youHaveAlreadyVoted(), Material.BONE);
 										player.getMainScreen().getActivePopup().close();
 									}
 								}
@@ -519,24 +525,24 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									votes.put(player, true);
 									player.getMainScreen().getActivePopup().close();
 									
-									player.sendNotification("Vote", "You voted YES", Material.BONE);
+									player.sendNotification("Vote", languagehandler.votedYes(), Material.BONE);
 									
 									updateGUI(player, true);
 								}
 							}
 							else {
-								player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+								player.sendMessage(chat.chatWarning(languagehandler.NoActiveVoteSession()));
 								player.getMainScreen().getActivePopup().close();
 							}
 						}
 						else {
-							player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+							player.sendMessage(chat.chatWarning(languagehandler.NoActiveVoteSession()));
 							player.getMainScreen().getActivePopup().close();
 						}
 					}
 					// If player doesn't have permission
 					else {
-						player.sendMessage(chat.chatSevere("You are not permitted to vote!"));
+						player.sendMessage(chat.chatSevere(languagehandler.YouDoNotHavePermissionToVote()));
 					}
 				}
 				
@@ -559,14 +565,14 @@ public class VoteforDay extends JavaPlugin implements Listener{
 										votes.put(player, false);
 										voted.put(player, true);
 										log.logDebug("Player: " + player.getName() + " voted NO");
-										player.sendNotification("Vote", "You voted NO", Material.BONE);
+										player.sendNotification("Vote", languagehandler.votedNo(), Material.BONE);
 										player.getMainScreen().getActivePopup().close();
 										
 										updateGUI(player, false);
 									}
 									else {
 										log.logDebug("Player: " + player.getName() + " Has already voted!");
-										player.sendNotification("Vote", "You have already voted!", Material.BONE);
+										player.sendNotification("Vote", languagehandler.youHaveAlreadyVoted(), Material.BONE);
 										player.getMainScreen().getActivePopup().close();
 									}
 								}
@@ -578,37 +584,36 @@ public class VoteforDay extends JavaPlugin implements Listener{
 									
 									player.getMainScreen().getActivePopup().close();
 									
-									player.sendNotification("Vote", "You voted NO", Material.BONE);
+									player.sendNotification("Vote", languagehandler.votedNo(), Material.BONE);
 									updateGUI(player, false);
 								}
 							}
 							else {
-								player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+								player.sendMessage(chat.chatWarning(languagehandler.NoActiveVoteSession()));
 								player.getMainScreen().getActivePopup().close();
 							}	
 						}
 						else {
-							player.sendMessage(chat.chatWarning("There isn't an active vote session in your world!"));
+							player.sendMessage(chat.chatWarning(languagehandler.NoActiveVoteSession()));
 							player.getMainScreen().getActivePopup().close();
 						}	
 					}
 					else {
 						log.logDebug("Player: " + player.getName() + "Is not permitted to vote!");
-						player.sendMessage(chat.chatSevere("You are not permitted to vote!"));
+						player.sendMessage(chat.chatSevere(languagehandler.YouDoNotHavePermissionToVote()));
 					}
 					
 				}	
 	}
 	
-	
 	private void voteEnd(final Player[] players, final World world) {
 		this.getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable () {
-
+			
 			@Override
 			public void run() {
 				
 				Server server = getServer();
-				server.broadcastMessage(chat.chatInfo("Voting Complete! On world: " + world.getName()));
+				server.broadcastMessage(chat.chatInfo(languagehandler.VoteCompletedOnWorld() + " " + world.getName()));
 				
 				int positive_votes = 0;
 				int negative_votes = 0;
@@ -640,12 +645,12 @@ public class VoteforDay extends JavaPlugin implements Listener{
 				// Test which votes won
 				if (positive_votes > negative_votes) {
 					log.logDebug("Positive votes won! On world: " + current_world.getName() +" Changing to day!");
-					server.broadcastMessage(chat.chatInfo("'Yes' votes won! On world: " + world.getName() + " Changing to day!"));
+					server.broadcastMessage(chat.chatInfo(languagehandler.YESVoteWon()));
 					current_world.setTime(0);
 				}
 				else {
 					log.logDebug("Negative votes won! On world: " + current_world.getName() + " Not changing to day!");
-					server.broadcastMessage(chat.chatInfo("'No' votes won! On world: " + current_world.getName() + " Not changing to day!"));
+					server.broadcastMessage(chat.chatInfo(languagehandler.NOVoteWon()));
 				}
 				
 				// Reset players votes

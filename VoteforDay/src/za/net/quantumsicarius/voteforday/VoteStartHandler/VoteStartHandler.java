@@ -25,6 +25,7 @@ import org.bukkit.plugin.Plugin;
 
 import za.net.quantumsicarius.voteforday.Chat.Chat;
 import za.net.quantumsicarius.voteforday.Config.Config;
+import za.net.quantumsicarius.voteforday.Language.LanguageHandler;
 import za.net.quantumsicarius.voteforday.Logger.LogMain;
 
 public class VoteStartHandler {
@@ -44,12 +45,15 @@ public class VoteStartHandler {
 	// Define world object
 	World current_world;
 	
+	// Define Language object
+	LanguageHandler language;
+	
 	// Create HashMaps
 	HashMap <Player, Boolean> voted = new HashMap<Player, Boolean>();
 	HashMap <Player, Boolean> votes = new HashMap<Player, Boolean>();	
 	HashMap <World, Boolean> vote_session_world = new HashMap<World, Boolean>();
 
-	public VoteStartHandler(Plugin plugin, Config config_class, LogMain log_class, Chat chat_class) {
+	public VoteStartHandler(Plugin plugin, Config config_class, LogMain log_class, Chat chat_class, LanguageHandler lang_class) {
 		// Instantiate plugin object
 		vfd = plugin;
 		// Instantiate configuration object
@@ -58,6 +62,8 @@ public class VoteStartHandler {
 		chat = chat_class;
 		// Instantiate log object
 		log = log_class;
+		// Instantiate language object
+		language = lang_class;
 	}
 	
 	// Vote_session_world = World vote session active
@@ -75,11 +81,11 @@ public class VoteStartHandler {
 				if (vote_session_world.containsKey(player.getWorld())) {
 					// If current world is active ignore player's vote start
 					if (vote_session_world.get(player.getWorld())) {
-						player.sendMessage(chat.chatWarning("There is already an active vote!"));
+						player.sendMessage(chat.chatWarning(language.AlreadyActiveVoteSession()));
 					}
 					else {
 						log.logDebug("Player: " + player.getName() + " has started a vote!");
-						player.sendMessage(chat.chatInfo("Started Vote!"));	
+						player.sendMessage(chat.chatInfo(language.YouStartedTheVote()));	
 						
 						vote_session_world.put(player.getWorld(), true);
 						log.logDebug("Started a vote session in: " + player.getWorld().getName());
@@ -89,7 +95,7 @@ public class VoteStartHandler {
 				}
 				else {
 					log.logDebug("Player: " + player.getName() + " has started a vote!");
-					player.sendMessage(chat.chatInfo("You Started the Vote!"));	
+					player.sendMessage(chat.chatInfo(language.YouStartedTheVote()));	
 					
 					vote_session_world.put(player.getWorld(), true);
 					log.logDebug("Started a vote session in: " + player.getWorld().getName());
@@ -99,7 +105,7 @@ public class VoteStartHandler {
 			}
 		}
 		else {
-			player.sendMessage(chat.chatSevere("You are not permitted to start a vote!"));
+			player.sendMessage(chat.chatSevere(language.NoPermissionToStartAVote()));
 		}
 		return false;
 	}
@@ -116,13 +122,13 @@ public class VoteStartHandler {
 			}
 			else {
 				log.logDebug("Player: " + player.getName() + " has tried to vote during day time!");
-				player.sendMessage(chat.chatWarning("Can't vote when its day!"));
+				player.sendMessage(chat.chatWarning(language.canNotVoteDuringDay()));
 				return false;
 			}
 		}
 		else {
 			log.logDebug("Player: " + player.getName() + " has tried to start a vote in an illegal world environment! World Environment: " + current_world.getEnvironment());
-			player.sendMessage(chat.chatSevere("You can only use this command in a Normal World!"));
+			player.sendMessage(chat.chatSevere(language.canOnlyVoteOnNormalWorld()));
 			return false;
 		}
 	}
