@@ -1,19 +1,24 @@
-main: [Enabled!
-,Disabled!
-,You have already started a vote session
-,You started a vote session
-,A vote session has already been started on this world
-,You don't have permission to start a vote session!
-,Can't start a vote session when its day!
-,Can only start a vote session in the Normal World!
-,You voted YES
-,You voted NO
-,You have already voted!
-,You don't have permission to vote!
-,Illegal vote parameter!
-,There isn't an active vote session in your world!
-,Start voting!
-,Voting completed on 
-,YES votes won!
-,NO votes won!]
+main: [!!str Enabled!
+,!!str Disabled!
+,!!str You have already started a vote session
+,!!str You started a vote session
+,!!str A vote session has already been started in this world
+,!!str You don't have the permission to start a vote session!
+,!!str Can't start a vote session when its day!
+,!!str Can only start a vote session in the Normal World!
+,!!str You voted YES
+,!!str You voted NO
+,!!str You have already voted!
+,!!str You don't have the permission to vote!
+,!!str Illegal vote parameter!
+,!!str There isn't an active vote session in your world!
+,!!str Begin voting!
+,!!str Voting completed in
+,!!str YES votes won!
+,!!str NO votes won!
+,!!str Cast your vote!
+,!!str Yes
+,!!str No
+,!!str Yes votes
+,!!str No votes]
 

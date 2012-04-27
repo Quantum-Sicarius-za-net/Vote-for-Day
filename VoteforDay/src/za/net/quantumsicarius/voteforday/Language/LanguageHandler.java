@@ -65,7 +65,7 @@ public class LanguageHandler {
 		file = new File("plugins" + File.separator + "VoteforDay" + File.separator + "Translations" + File.separator + config.getLanguage() + ".yml");
 		
 		if(!file.exists()) {
-			log.logInfo("Creating new Language Config file!");
+			log.logInfo("Creating new Language file!");
 			log.logDebug("File path: " + file);
 			
 			if (!file.getParentFile().exists()) {
@@ -103,7 +103,7 @@ public class LanguageHandler {
 		try {
 			yml.load(file);
 			list = (ArrayList<String>) yml.getList("main");
-			if (list.toArray().length <= 16) {
+			if (list.toArray().length <= 21) {
 				log.logSevere("The Language file is invalid, using English!");
 				File newfile = new File("plugins" + File.separator + "VoteforDay" + File.separator + "Translations" + File.separator + "English.yml");
 				if (!newfile.exists()) {
@@ -223,6 +223,26 @@ public class LanguageHandler {
 	}
 	public String NOVoteWon() {
 		return (String) list.toArray()[17];
+		
+	}
+	public String GUICastYourVote() {
+		return (String) list.toArray()[18];
+		
+	}
+	public String GUIYes() {
+		return (String) list.toArray()[19];
+		
+	}
+	public String GUINo() {
+		return (String) list.toArray()[20];
+		
+	}
+	public String GUIProgressYesVotes() {
+		return (String) list.toArray()[21];
+		
+	}
+	public String GUIProgressNoVotes() {
+		return (String) list.toArray()[22];
 		
 	}
 }

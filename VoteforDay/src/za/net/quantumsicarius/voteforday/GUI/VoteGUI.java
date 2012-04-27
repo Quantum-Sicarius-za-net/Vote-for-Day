@@ -30,13 +30,19 @@ import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import za.net.quantumsicarius.voteforday.VoteforDay;
+import za.net.quantumsicarius.voteforday.Language.LanguageHandler;
 
 
 public class VoteGUI extends GenericPopup{
     
 	protected VoteforDay vfd = (VoteforDay) getPlugin().getServer().getPluginManager().getPlugin("VoteforDay");
     
-	public VoteGUI (SpoutPlayer player) {
+	LanguageHandler lang;
+	
+	public VoteGUI (SpoutPlayer player, LanguageHandler lang_class) {
+		
+		// Instantiate Language Handler
+		lang = lang_class;
 		
 		// Create a new container
 		Container box = new GenericContainer();
@@ -45,18 +51,18 @@ public class VoteGUI extends GenericPopup{
 		int heightScale = player.getMainScreen().getHeight();
 	    
 		//Label
-		String votestring = ChatColor.GREEN + "Cast your vote!";
+		String votestring = ChatColor.GREEN + lang.GUICastYourVote();
 		GenericLabel label = new GenericLabel(votestring);
 		label.setAnchor(WidgetAnchor.CENTER_CENTER);
 	    
 		// Yes Button
-		GenericButton acceptButton = new GenericButton("Yes");
+		GenericButton acceptButton = new GenericButton(lang.GUIYes());
 		acceptButton.setAnchor(WidgetAnchor.CENTER_CENTER);
 		acceptButton.setAlign(WidgetAnchor.CENTER_CENTER);
 		acceptButton.setHoverColor(new Color(0, 255, 0));
 	     
 		// No Button
-		GenericButton declineButton = new GenericButton("No");
+		GenericButton declineButton = new GenericButton(lang.GUINo());
 		declineButton.setAnchor(WidgetAnchor.CENTER_CENTER);
 		declineButton.setAlign(WidgetAnchor.CENTER_CENTER);
 		declineButton.setHoverColor(new Color(255, 0, 0));
@@ -75,7 +81,7 @@ public class VoteGUI extends GenericPopup{
 	
 	// Check button isAccept
     public boolean isAccept(Button button) {
-    	if (button.getPlugin() == vfd && button.getText() == "Yes") {
+    	if (button.getPlugin() == vfd && button.getText() == lang.GUIYes()) {
     		return true;
     	}
     	else {
@@ -85,7 +91,7 @@ public class VoteGUI extends GenericPopup{
     
     // Check button isDecline
     public boolean isDecline(Button button) {
-        if (button.getPlugin() == vfd && button.getText() == "No") {
+        if (button.getPlugin() == vfd && button.getText() == lang.GUINo()) {
         	return true;
         }
         else {

@@ -339,9 +339,9 @@ public class VoteforDay extends JavaPlugin implements Listener{
 							// Check if player has permission
 							if (spoutplayer.hasPermission("voteforday.vote") | spoutplayer.isOp()) {
 								spoutplayer.sendNotification("Vote!",languagehandler.StartVoting() , Material.BONE);
-								VoteGUI popup = new VoteGUI(spoutplayer);
+								VoteGUI popup = new VoteGUI(spoutplayer, languagehandler);
 								spoutplayer.getMainScreen().attachPopupScreen(popup);
-								voteProgressGUI = new VoteProgress(spoutplayer, this);
+								voteProgressGUI = new VoteProgress(spoutplayer, this, languagehandler);
 								player_voteProgress_object.put(spoutplayer, voteProgressGUI);
 								//voteProgressGUI.createGUI(spoutplayer, this);
 								voteProgressGUI.reset_GUI(spoutplayer);
@@ -485,7 +485,7 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		SpoutPlayer player = event.getPlayer();
 		Button control = event.getButton();
 		
-		VoteGUI gui = new VoteGUI(player);
+		VoteGUI gui = new VoteGUI(player, languagehandler);
 		
 		log.logDebug("Button click! by: " + player.getName());
 					

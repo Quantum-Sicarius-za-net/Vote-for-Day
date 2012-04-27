@@ -1,11 +1,13 @@
 # Config file for VoteforDay
-configFileVersion: 0.7.1 # Do not modify this!
+configFileVersion: 1.0 # Do not modify this!
 # Time at which vote sessions may commence (Night Time Defualt = 13800)
 voteAllowStartTime: 13800
 # Vote session time in seconds (Defualt = 20)
 voteSessionTime: 20
 # Force voting to start automatically when voteAllowStartTime comes(Defualt = false)
 
+# Language to use (Must be a file name within your Translation folder, you don't need to include the ".yml")
+language: English
 # Key that you use to start a votesession, SpoutCraft players only.
 keyBinding: v
 # Enable/Disable debug log (Default = false)

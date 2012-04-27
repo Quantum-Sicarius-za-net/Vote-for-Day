@@ -24,6 +24,7 @@ import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import za.net.quantumsicarius.voteforday.VoteforDay;
+import za.net.quantumsicarius.voteforday.Language.LanguageHandler;
 
 public class VoteProgress{
 	
@@ -36,17 +37,21 @@ public class VoteProgress{
 	private int yes_votes = 0;
 	private int no_votes = 0;
 	
-	public VoteProgress(SpoutPlayer player, VoteforDay vfd) {
+	LanguageHandler lang;
+	
+	public VoteProgress(SpoutPlayer player, VoteforDay vfd, LanguageHandler lang_class) {
+		
+		lang = lang_class;
 		
 		backtexture.setAnchor(WidgetAnchor.CENTER_CENTER).setWidth(50).setHeight(50);
 		
 		title.setText("Vote Progress:");
 		title.setAnchor(WidgetAnchor.TOP_CENTER);
 		
-		progress_text_left.setText("0 - Yes Votes");
+		progress_text_left.setText("0 - " + lang.GUIProgressYesVotes());
 		progress_text_left.setAnchor(WidgetAnchor.CENTER_LEFT);
 		
-		progress_text_right.setText("0 - No Votes");
+		progress_text_right.setText("0 - " + lang.GUIProgressNoVotes());
 		progress_text_right.setAnchor(WidgetAnchor.CENTER_RIGHT);
 		
 		box.addChildren(title, progress_text_left, progress_text_right);
@@ -59,8 +64,8 @@ public class VoteProgress{
 		yes_votes = yes_votes + progress_yes;
 		no_votes = no_votes + progress_no;
 		
-		progress_text_left.setText(Integer.toString(yes_votes) + " - Yes Votes");
-		progress_text_right.setText(Integer.toString(no_votes) + " - No Votes");
+		progress_text_left.setText(Integer.toString(yes_votes) + " - " + lang.GUIProgressYesVotes());
+		progress_text_right.setText(Integer.toString(no_votes) + " - " + lang.GUIProgressNoVotes());
 		
 		box.setVisible(true);
 		
@@ -73,8 +78,8 @@ public class VoteProgress{
 	}
 	
 	public void reset_GUI(SpoutPlayer player) {
-		progress_text_left.setText("0 - Yes Votes");
-		progress_text_right.setText("0 - No Votes");
+		progress_text_left.setText("0 - " + lang.GUIProgressYesVotes());
+		progress_text_right.setText("0 - " + lang.GUIProgressNoVotes());
 		
 		box.setVisible(true);
 		
