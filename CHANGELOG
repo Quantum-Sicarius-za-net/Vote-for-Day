@@ -1,0 +1,33 @@
+## v1.0
+* Added multi-language support
+
+## v0.7.1
+* Fixed a bug in the Vote Progress GUI, where changing worlds created visual artifacts
+* Players can now only start one vote per-world
+
+## v0.7
+* Fixed chat bug which doesn't tell non-spout players to vote
+* Addressed issue where player is AFK and GUI doesn't close
+* Added a vote progress GUI
+
+## v0.6
+* Added keybinding
+
+## v0.5
+* Added permissions
+
+## v0.4.2
+* Fixed the chat spam when using certain commands or GUI's
+
+## v0.4.1
+* Fixed bug that cuased two worlds unable to vote simultaneously
+
+## v0.4
+* Added multi-world support
+* Rewrote vote checking to support multiple worlds
+
+## v0.3
+* Added config
+* Added more safety checks
+* Added Logger
+* Code cleanup
