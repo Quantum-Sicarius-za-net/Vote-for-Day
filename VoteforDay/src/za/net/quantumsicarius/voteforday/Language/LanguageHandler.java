@@ -103,7 +103,8 @@ public class LanguageHandler {
 		try {
 			yml.load(file);
 			list = (ArrayList<String>) yml.getList("main");
-			if (list.toArray().length <= 21) {
+			if (list.toArray().length < 23) {
+				log.logDebug("The required length is: 23, the length recieved was: " + list.toArray().length);
 				log.logSevere("The Language file is invalid, using English!");
 				File newfile = new File("plugins" + File.separator + "VoteforDay" + File.separator + "Translations" + File.separator + "English.yml");
 				if (!newfile.exists()) {

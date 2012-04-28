@@ -1,18 +1,22 @@
-main: [Aktiviert!
-,Deaktiviert!
-,Du hast bereits eine Abstimmungsserie angefangen 
-,Du hast eine Abstimmungsserie angefangen
-,Eine Abstimmungsserie wurde schon angefangen in dieser Welt
-,Du hast nicht die benötigten Berechtigungen um eine Abstimmungsserie anzufangen!
-,Du kannst eine Abstimmungsserie nicht während dem Tag anfangen!
-,Du kannst eine Abstimmungsserie nur in der normalen Welt anfangen
-,Du hast JA abgestimmt
-,Du hast NEIN abgestimmt
-,Du hast schon abgestimmt!
-,Du hast die Berichtigung abstimmen zu können nicht!
-,Ungültiger Abstimmungs-Parameter!
-,Es ist keine Abstimmungsserie aktiv in dieser Welt!
-,Abstimmungsbeginn!
-,Abstimmung abgeschlossen in 
-,JA Stimmen haben gewonnen!
-,NEIN Stimmen haben gewonnen!]
+main: [!!str Aktiviert!
+,!!str Deaktiviert!
+,!!str Du hast bereits eine Abstimmungsserie angefangen 
+,!!str Du hast eine Abstimmungsserie angefangen
+,!!str Eine Abstimmungsserie wurde schon angefangen in dieser Welt
+,!!str Du hast nicht die benötigten Berechtigungen um eine Abstimmungsserie anzufangen!
+,!!str Du kannst eine Abstimmungsserie nicht während dem Tag anfangen!
+,!!str Du kannst eine Abstimmungsserie nur in der normalen Welt anfangen
+,!!str Du hast JA abgestimmt
+,!!str Du hast NEIN abgestimmt
+,!!str Du hast schon abgestimmt!
+,!!str Du hast die Berichtigung abstimmen zu können nicht!
+,!!str Ungültiger Abstimmungs-Parameter!
+,!!str Es ist keine Abstimmungsserie aktiv in dieser Welt!
+,!!str Abstimmungsbeginn!
+,!!str Abstimmung abgeschlossen in 
+,!!str JA Stimmen haben gewonnen!
+,!!str NEIN Stimmen haben gewonnen!
+,!!str Ja
+,!!str Nein
+,!!str Ja Stimmen
+,!!str Nein Stimmen]

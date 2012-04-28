@@ -19,6 +19,6 @@ main: [!!str Enabled!
 ,!!str Cast your vote!
 ,!!str Yes
 ,!!str No
-,!!str YES votes
-,!!str NO votes]
+,!!str Yes votes
+,!!str No votes]
 
