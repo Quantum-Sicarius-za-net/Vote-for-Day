@@ -16,6 +16,7 @@ main: [!!str Aktiviert!
 ,!!str Abstimmung abgeschlossen in 
 ,!!str JA Stimmen haben gewonnen!
 ,!!str NEIN Stimmen haben gewonnen!
+,!!str Gebe deine Stimme ab!
 ,!!str Ja
 ,!!str Nein
 ,!!str Ja Stimmen
