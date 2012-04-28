@@ -27,7 +27,7 @@ Credits
 [Get Spout]: http://get.spout.org
 [Reload]: http://spout.in/reload
 [License]: http://www.gnu.org/licenses/gpl.html
-[Page]: http://forums.spout.org/threads/vote-for-day-alpha-v0-7-1.2218/
+[Page]: http://forums.spout.org/threads/mech-fun-vote-for-day-v1-0-0-vote-for-the-sun-spn1100-cb1-2-5-r1-0.2574/
 [GitHub]: https://github.com/Quantum-Sicarius-za-net/Vote-for-Day
 [Issues]: https://github.com/Quantum-Sicarius-za-net/Vote-for-Day/issues
 
