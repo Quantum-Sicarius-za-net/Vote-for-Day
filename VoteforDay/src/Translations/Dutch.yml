@@ -1,0 +1,23 @@
+main: [!!str Aktiveret!
+,!!str Deaktiveret!
+,!!str Du har allerede begyndt en afstemning
+,!!str Du begyndte en afstemning
+,!!str Der er allerede en afstemning igang i denne verden
+,!!str Du har ikke retigheder nok til at starte en afstemning!
+,!!str Du kan ikke begynde en afstemning når der er dag!
+,!!str Du kan kun begynde en afstemning i den almindelige verden!
+,!!str Du Stemte JA
+,!!str Du Stemte Nej
+,!!str Du har allerede Stemt!
+,!!str Du har ikke retigheder til at stemme!
+,!!str Forkert Afstemnings svar!
+,!!str Der er ingen Afstemninger igang i denne verden!
+,!!str Afgiv din Stemme!
+,!!str Afstemning slutter om
+,!!str JA vandt Afstemningen!
+,!!str NEJ vand Afstemningen!
+,!!str Stem!
+,!!str Ja
+,!!str Nej
+,!!str Ja Afstemning
+,!!str Nej Afstemning]

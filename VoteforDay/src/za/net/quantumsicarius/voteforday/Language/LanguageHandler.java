@@ -78,18 +78,26 @@ public class LanguageHandler {
 				byte buf[]=new byte[1024];
 				int len;
 				
-				defConfigStream = vfd.getResource("Translations" + File.separator + config.getLanguage() +".yml");
+				log.logDebug("This OS file separator is: " + File.separator);
+				//defConfigStream = vfd.getResource("Translations" + File.separator + config.getLanguage() +".yml");
+				defConfigStream = vfd.getResource("Translations/" + config.getLanguage() +".yml");
 				
 				if (defConfigStream == null) {
-					defConfigStream = vfd.getResource("Translations" + File.separator + "English.yml");
+					log.logDebug("The requested language file isn't packed inside the JAR, using defualt.");
+					defConfigStream = vfd.getResource("Translations/English.yml");
 				}
 				
-				while((len = defConfigStream.read(buf)) >0) {
-					out.write(buf,0,len);
+				if (defConfigStream == null) {
+					log.logSevere("The required resource isn't found!");
 				}
-				
-				out.close();
-				defConfigStream.close();
+				else {
+					while((len = defConfigStream.read(buf)) > 0) {
+						out.write(buf,0,len);
+					}
+					
+					out.close();
+					defConfigStream.close();
+				}
 
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -1,6 +1,6 @@
 name: VoteforDay
 main: za.net.quantumsicarius.voteforday.VoteforDay
-version: 1.0
+version: 1.0.1
 depend: [Spout]
 authors: [Quantum-Sicarius,Guy_de_Siguro]
 commands:
