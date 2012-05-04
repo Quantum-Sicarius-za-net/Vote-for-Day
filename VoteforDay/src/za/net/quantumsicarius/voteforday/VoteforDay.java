@@ -1,4 +1,4 @@
-/**
+/*
 This file is part of VoteforDay.
 
 VoteforDay is free software: you can redistribute it and/or modify
@@ -13,7 +13,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with VoteforDay.  If not, see http://www.gnu.org/licenses/.
-**/
+*/
 
 package za.net.quantumsicarius.voteforday;
 
@@ -400,7 +400,8 @@ public class VoteforDay extends JavaPlugin implements Listener{
 		Player[] active_player_array = player.getWorld().getPlayers().toArray(new Player[0]);
 		
 		for (int i = 0; i < active_player_array.length; i++) {
-			SpoutPlayer spoutplayer = (SpoutPlayer) active_player_array[i];
+			//SpoutPlayer spoutplayer = (SpoutPlayer) active_player_array[i];
+			SpoutPlayer spoutplayer = SpoutManager.getPlayer(active_player_array[i]);
 			if (spoutplayer.isSpoutCraftEnabled()) {
 				log.logDebug("Updating GUI for: " + spoutplayer.getName());
 				if (type_of_vote) {

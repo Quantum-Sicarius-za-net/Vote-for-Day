@@ -46,9 +46,6 @@ public class VoteGUI extends GenericPopup{
 		
 		// Create a new container
 		Container box = new GenericContainer();
-		
-		int widthScale = player.getMainScreen().getWidth();
-		int heightScale = player.getMainScreen().getHeight();
 	    
 		//Label
 		String votestring = ChatColor.GREEN + lang.GUICastYourVote();
@@ -70,8 +67,10 @@ public class VoteGUI extends GenericPopup{
 		// Attach Buttons to container
 		box.addChildren(label ,acceptButton, declineButton);
 		box.setLayout(ContainerType.VERTICAL);
-		box.setWidth(widthScale / 10).setHeight(heightScale / 5);
-		box.setAnchor(WidgetAnchor.CENTER_CENTER);
+		box.setHeight(90);
+		box.setWidth(120);
+		box.setX(160);
+		box.setY(70);
 	    
 		// Attach container to widget
 		this.setTransparent(true);

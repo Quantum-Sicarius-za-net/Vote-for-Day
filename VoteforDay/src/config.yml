@@ -1,5 +1,5 @@
 # Config file for VoteforDay
-configFileVersion: 1.0.1 # Do not modify this!
+configFileVersion: 1.0.2 # Do not modify this!
 # Time at which vote sessions may commence (Night Time Defualt = 13800)
 voteAllowStartTime: 13800
 # Vote session time in seconds (Defualt = 20)
