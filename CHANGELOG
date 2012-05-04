@@ -1,3 +1,6 @@
+## v1.0.2
+* Fixed player cast exception
+
 ## v1.0.1
 * Added Danish Translation
 * Fixed Windows language file creation crash
